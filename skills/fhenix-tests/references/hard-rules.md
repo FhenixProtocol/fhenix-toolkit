@@ -4,17 +4,27 @@
 
 Mock environments simulate gas using stand-in operations that don't match the real threshold network's costs. **Never claim a contract is gas-tuned based on mock numbers alone.** Always validate on testnet (arb-sepolia, etc.) before mainnet.
 
-## Rule 2: Async decrypt requires polling — even in tests
+## Rule 2: `execute()` is the one async terminator — don't poll
 
-`FHE.decrypt(ct)` is async. A test that does `decrypt` then immediately `getDecryptResult` in the same call will revert in real environments (and may behave unrealistically in mocks). Always model the two-tx pattern:
+The legacy on-chain `FHE.decrypt(ct)` + `getDecryptResultSafe(ct)` poll loop has been removed. All decrypt paths terminate on a single `await client.decryptFor*(...).execute()`. In MOCK mode it resolves immediately; in TESTNET mode it takes seconds.
 
 ```
-await contract.requestDecrypt();
-await waitForDecryption(contract, ctHash);
-await contract.settle();   // separate tx, uses the result
+// Encrypt input
+const [enc] = await client.encryptInputs([Encryptable.uint64(42n)]).execute();
+await contract.submit(enc);
+
+// Trigger reveal (contract calls FHE.allowPublic inside)
+await contract.requestSettle();
+
+// Decrypt and settle in one await
+const { decryptedValue, signature } = await client
+  .decryptForTx(await contract.publicHandle())
+  .withoutPermit()
+  .execute();
+await contract.finalizeWith(decryptedValue, signature);
 ```
 
-If your mock allows synchronous resolution, your tests still won't catch real-environment bugs.
+Test timeouts must accommodate testnet latency (30s+); MOCK mode tests run fast.
 
 ## Rule 3: Seed `FHE.random*` deterministically
 

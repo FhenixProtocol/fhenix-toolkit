@@ -1,6 +1,6 @@
 ---
 name: fhenix-tests
-description: Use when writing or extending tests for confidential CoFHE code — Foundry mocks, Hardhat plugin, encrypted input/output assertions, async-decrypt polling in tests. Activates on .test.ts / .t.sol files importing FHE.sol or @cofhe/sdk, on files under tests/contracts/, or on prompts like "test this confidential contract."
+description: Use when writing or extending tests for confidential CoFHE code — Foundry mocks, Hardhat plugin, encrypted input fixtures, SDK decrypt flows (decryptForView and decryptForTx) in tests. Activates on .test.ts / .t.sol files importing FHE.sol or @cofhe/sdk, on files under tests/contracts/, or on prompts like "test this confidential contract."
 ---
 
 # fhenix-tests — test confidential CoFHE contracts and dApps
@@ -22,7 +22,7 @@ Decision tree: `references/decision-trees.md`.
 
 1. **Mock gas ≠ prod gas.** Mock environments simulate gas costs that don't match the threshold network's actual costs. Always validate gas-sensitive code on a testnet before mainnet.
 
-2. **Async decrypt requires polling in tests too.** `FHE.decrypt(ct)` followed immediately by `getDecryptResult(ct)` in the same test will revert in real environments. Mocks may "fake" sync — but your tests must still wait/poll for parity.
+2. **`execute()` is the one async terminator — don't poll.** The legacy on-chain `FHE.decrypt(ct)` + `getDecryptResultSafe(ct)` poll loop is gone. All decrypt paths terminate on `await client.decryptFor*(...).execute()`; in MOCK mode it resolves immediately, in TESTNET mode it takes seconds. Tests must `await` properly and use realistic timeouts.
 
 3. **Seed `FHE.random*` for determinism.** Pass a non-zero seed to make tests reproducible. Seed=0 picks a system seed → flaky tests.
 
@@ -75,25 +75,36 @@ The plugin auto-selects `MOCK` mode on the hardhat network and `TESTNET` on arb-
 
 Details: `concepts/hardhat-plugin-setup.md`.
 
-## Async-decrypt in tests
+## Testing the decrypt flow
+
+E2E tests must exercise the on-chain `allow*` plus the SDK decrypt plus on-chain verify, in that order:
 
 ```
-// Request decrypt in tx 1
+// Encrypt input, submit
+const [encInput] = await client.encryptInputs([Encryptable.uint64(42n)]).execute();
+await contract.submit(encInput);
+
+// Trigger reveal (contract calls FHE.allowPublic inside)
 await contract.requestSettlement();
-// Wait for result (mocks may resolve fast; real chains take seconds)
-await waitForDecryption(contract, ctHash);   // helper that polls
-// Settle in tx 2
-await contract.finalizeSettlement(...);
+const ctHash = await contract.publicHandle();
+
+// Client decrypts via SDK
+const { decryptedValue, signature } = await client
+  .decryptForTx(ctHash).withoutPermit().execute();
+
+// Settle by calling back with the proven plaintext
+await contract.finalizeWith(decryptedValue, signature);
+// Contract verifies via FHE.verifyDecryptResult(decryptedValue, signature)
 ```
 
-Pattern: `concepts/testing-async-decrypt.md`.
+Pattern: `concepts/testing-decrypt-flows.md`.
 
 ## Concepts to read on demand
 
 - `foundry-mocks-setup.md` — installing and using `cofhe-foundry-mocks`.
 - `hardhat-plugin-setup.md` — installing and using `@cofhe/hardhat-plugin`, MOCK vs TESTNET mode.
 - `testing-encrypted-input.md` — building `InEuintXX` test fixtures off-chain.
-- `testing-async-decrypt.md` — polling for decrypt results in tests.
+- `testing-decrypt-flows.md` — testing SDK `decryptForView` / `decryptForTx` round-trips and on-chain verify.
 - `testing-multi-permit.md` — multiple permits / ACPs / cross-user flows.
 - `mock-vs-prod-divergence.md` — what mocks differ on (gas, latency, randomness).
 
