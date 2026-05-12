@@ -27,6 +27,10 @@ Early / private. Public release pending — see [`docs/SPEC.md`](docs/SPEC.md) f
 
 This plugin teaches Claude **how to look up current information**, not snapshots of it. Concepts, decision trees, and gotchas are curated. API surfaces (FHE.sol functions, SDK methods, error codes) are looked up live from the public Fhenix repos at the moment of need. That way the plugin stays correct as the underlying SDK and contracts evolve, without constant snapshot maintenance.
 
+## Other AI tools
+
+The plugin's content is plain markdown and works with Cursor, GitHub Copilot, OpenAI Codex CLI, and other markdown-aware coding assistants. See [`docs/integrations.md`](docs/integrations.md) for per-tool integration recipes.
+
 ## Resources
 
 - Fhenix docs — https://cofhe-docs.fhenix.zone
