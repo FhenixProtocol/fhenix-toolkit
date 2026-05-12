@@ -35,9 +35,11 @@ const [encEq, encResult] = await cofheClient
 
 ## Encryptable types (verify via lookup-recipes)
 
-- `Encryptable.uint8 / uint16 / uint32 / uint64 / uint128(value: bigint)` — encrypted unsigned ints
+The factory functions on `Encryptable` accept the value as `string | bigint` (mapped to the corresponding `FheTypes.*`):
+
+- `Encryptable.uint8 / uint16 / uint32 / uint64 / uint128(value: string | bigint)` — encrypted unsigned ints
 - `Encryptable.bool(value: boolean)` — encrypted bool (mapped to `ebool`)
-- `Encryptable.address(value: \`0x${string}\`)` — encrypted address (mapped to `eaddress`)
+- `Encryptable.address(value: string | bigint)` — encrypted address (mapped to `FheTypes.Uint160`, surfaces as `eaddress` on-chain)
 
 Always look up the current exact name list (see `references/lookup-recipes.md`) — the surface evolves.
 

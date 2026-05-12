@@ -2,14 +2,14 @@
 
 ## What
 
-`@cofhe/sdk` splits decryption into two purpose-built methods:
+`@cofhe/sdk` splits decryption into two purpose-built builder methods, which together yield three usable modes:
 
 - `decryptForView` — UI display only. Permit-gated. Returns `{ decryptedValue }`.
-- `decryptForTx` — for on-chain follow-up. Returns `{ decryptedValue, signature }`. Variants: `.withPermit()` and `.withoutPermit()`.
+- `decryptForTx` — for on-chain follow-up. Returns `{ decryptedValue, signature }`. Two variants: `.withPermit()` and `.withoutPermit()`.
 
 Pick based on **what you'll do with the value next** (display, or call a contract).
 
-## The three modes
+## The three modes (one View, two Tx variants)
 
 ### decryptForView — UI only, never on-chain
 

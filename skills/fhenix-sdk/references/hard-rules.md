@@ -4,9 +4,9 @@ These rules are timeless across SDK versions. Violating them produces silent fai
 
 ## Rule 1: Lazy init — keys fetched on first `.execute()`
 
-`createCofheClient(config)` returns immediately. The heavy work (fetching FHE keys, initializing the TFHE WASM module) happens lazily on the first `client.encryptInputs(...).execute()` call.
+`createCofheClient(config)` is synchronous; it returns immediately. The heavy work (fetching FHE keys, initializing the TFHE WASM module) happens lazily on the first `await client.<builder>(...).execute()` call — whether that's `encryptInputs`, `decryptForView`, or `decryptForTx`.
 
-**Implication:** don't await `createCofheClient` for crypto-readiness, and don't write loading-spinner code around it. Spin only around the first `execute()`.
+**Implication:** don't try to `await createCofheClient` (it isn't async) and don't write loading-spinner code around it. Spin only around the first `.execute()`.
 
 ## Rule 2: `.connect(publicClient, walletClient)` is required before any `.execute()`
 
@@ -23,7 +23,7 @@ Without `.connect`, calls fail with opaque "no chain" errors.
 
 ## Rule 3: Permits are explicit — no auto-creation
 
-Legacy `cofhejs.initialize(...)` auto-generated a self-permit. `@cofhe/sdk` does NOT. Call `client.permits.getOrCreateSelfPermit({...})` before any decrypt that needs a permit.
+Legacy `cofhejs.initialize(...)` auto-generated a self-permit. `@cofhe/sdk` does NOT. Call `client.permits.getOrCreateSelfPermit(...)` before any decrypt that needs a permit — see `concepts/permits.md` for the current signature.
 
 ## Rule 4: Permit expiration is in Unix SECONDS
 

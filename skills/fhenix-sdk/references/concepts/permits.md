@@ -6,23 +6,32 @@ A permit is a signed authorization that lets the SDK ask the threshold network f
 
 ## Permit operations
 
-```
-// Create a fresh self-permit
-const permit = await cofheClient.permits.createSelf({
-  issuer: address,
-  name: 'myapp',
-  expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,  // SECONDS!
-});
+The exact signatures are versioned — always verify against the installed `node_modules/@cofhe/sdk/dist/permits.d.ts` (see `references/lookup-recipes.md`). The canonical examples below mirror what `miniapp-equle/packages/cofhe-nextjs/src/app/hooks/usePermit.ts` does today.
 
-// Get-or-create (idempotent — most apps use this)
-const permit = await cofheClient.permits.getOrCreateSelfPermit({...});
+```
+// Get-or-create (idempotent — most apps use this).
+// First two args are publicClient / walletClient overrides (pass undefined to use the connected ones).
+// Third arg is the options bag.
+const permit = await cofheClient.permits.getOrCreateSelfPermit(
+  undefined,
+  undefined,
+  {
+    issuer: address,
+    name: 'myapp',
+    expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,  // SECONDS
+  }
+);
 
 // Read the cached active permit
-const permit = cofheClient.permits.getActivePermit();
+const active = cofheClient.permits.getActivePermit();
 
-// Remove a permit
-cofheClient.permits.removePermit(permitId);
+// Remove a permit by its hash
+if (active) {
+  cofheClient.permits.removePermit(active.hash);
+}
 ```
+
+For lower-level direct creation (sharing permits, manual construction), see `PermitUtils` and the `CreateSelfPermitOptions` / `CreateSharingPermitOptions` types in `packages/sdk/permits/types.ts` on the cofhesdk repo.
 
 ## Permit scoping — name strategy
 
@@ -68,41 +77,43 @@ useEffect(() => {
 
 Bump `permitVersion` after `createSelf` / `removePermit`.
 
-## Access Control Permits (ACPs) — selective disclosure
+## Sharing permits — selective disclosure
 
-The SDK supports scoped permits naming a specific recipient. The recipient holds the permit and can decrypt on the issuer's behalf; no one else can.
+The SDK supports **sharing permits**: the issuer signs a permit naming a specific recipient; the recipient can then decrypt the issuer's value via the threshold network. No one else can.
 
-```
-const acp = await cofheClient.permits.createPermit({
-  issuer: holder,
-  recipient: verifierAddress,
-  name: 'compliance-disclosure',
-  expiration: ...,
-});
-// Holder shares the ACP JSON with the verifier off-chain.
-// Verifier uses it to decrypt the holder's value — chain has no record.
-```
+The relevant API surface (verify via `references/lookup-recipes.md`):
 
-This is the selective-disclosure pattern: prove a fact to one party without revealing it on-chain.
+- `CreateSharingPermitOptions` — options type for sharing permits.
+- `ImportSharedPermitOptions` — options for the recipient importing the signed permit.
+- `PermitUtils` in `packages/sdk/permits/permit.js` exposes the low-level creation; the canonical app-level usage is in the `selective-disclosure-demo` repo.
+
+Conceptually:
+
+1. Issuer creates a sharing permit scoped to a recipient address.
+2. Issuer ships the serialized permit JSON to the recipient off-chain (out-of-band).
+3. Recipient imports it into their own client and decrypts the issuer's value.
+4. Chain has no record of the disclosure.
+
+This is the selective-disclosure pattern: prove a fact to one party without revealing it on-chain. Exact method names and option fields vary across SDK versions — read the installed `dist/permits.d.ts` and the canonical example before authoring.
 
 ## Canonical examples
 
 - **Equle — per-game permit naming.**
   https://github.com/FhenixProtocol/miniapp-equle
-  → `packages/cofhe-nextjs/src/app/hooks/usePermit.ts`. `getOrCreateSelfPermit({..., name: \`equle${gameId}\`})`.
+  → `packages/cofhe-nextjs/src/app/hooks/usePermit.ts`. Calls `getOrCreateSelfPermit(undefined, undefined, { issuer, name: \`equle${gameId}\`, expiration })` — the canonical 3-arg shape.
 
 - **Secret Santa — app-wide permit.**
   https://github.com/FhenixProtocol/encrypted-secret-santa
-  → `packages/nextjs/hooks/useSecretSanta.ts`. `getOrCreateSelfPermit({..., name: 'Secret Santa'})`.
+  → `packages/nextjs/hooks/useSecretSanta.ts`. Calls `getOrCreateSelfPermit(undefined, undefined, { issuer, name: 'Secret Santa', expiration })`.
 
-- **Selective disclosure — ACP scoping.**
+- **Selective disclosure — sharing permit scoping.**
   https://github.com/FhenixProtocol/selective-disclosure-demo
-  → ACP creation + JSON share for verifier to decrypt.
+  → Grep for `createSharing` / `importShared` in the app code to find the canonical call sites.
 
 ## Gotchas
 
 - **No auto-permit.** Calling `decryptForView` without a permit fails. Always `getOrCreateSelfPermit` first.
 - **`expiration` is absolute (Unix seconds), not duration.** Use `Math.floor(Date.now() / 1000) + DURATION_SECONDS`.
 - **Permits are per-client-instance.** A user reloading the page may lose them. Use SDK persistence (if any) or accept re-creating each visit.
-- **ACPs cross trust boundaries.** Treat the JSON as a capability token. Don't post it publicly and expect it to remain useful.
+- **sharing permits cross trust boundaries.** Treat the JSON as a capability token. Don't post it publicly and expect it to remain useful.
 - **`name` is part of the permit's identity** — changing `name` invalidates lookup via `getActivePermit`.

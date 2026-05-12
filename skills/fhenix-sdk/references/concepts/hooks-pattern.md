@@ -37,17 +37,21 @@ export function usePermit() {
 
   const ensure = useCallback(async () => {
     if (!isInitialized || !address) return null;
-    const permit = await cofheClient.permits.getOrCreateSelfPermit({
-      issuer: address,
-      name: 'myapp',
-      expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,
-    });
+    const permit = await cofheClient.permits.getOrCreateSelfPermit(
+      undefined,
+      undefined,
+      {
+        issuer: address,
+        name: 'myapp',
+        expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,
+      }
+    );
     bumpPermitVersion();
     return permit;
   }, [address, isInitialized, bumpPermitVersion]);
 
-  const remove = useCallback((id: string) => {
-    cofheClient.permits.removePermit(id);
+  const remove = useCallback((hash: string) => {
+    cofheClient.permits.removePermit(hash);
     bumpPermitVersion();
   }, [bumpPermitVersion]);
 

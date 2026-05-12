@@ -23,8 +23,8 @@ Does the user need to call a contract function using this value?
 Do you already have a valid cached permit?
 ├── Yes  →  client.permits.getActivePermit()
 └── No   →  Are you generating once and forgetting (most apps)?
-            ├── Yes  →  client.permits.getOrCreateSelfPermit({issuer, name, expiration})
-            └── No, recreate every time   →  client.permits.createSelf({...})
+            ├── Yes  →  client.permits.getOrCreateSelfPermit(undefined, undefined, {issuer, name, expiration})
+            └── No, recreate every time   →  Use PermitUtils.createSelf or the low-level API — verify shape via lookup recipes
 ```
 
 ## Permit name scoping: app-wide or per-cycle?

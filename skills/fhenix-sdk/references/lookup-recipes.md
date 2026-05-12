@@ -10,25 +10,32 @@ This file teaches Claude how to find current information about `@cofhe/sdk`. **P
 find node_modules/@cofhe/sdk -name '*.d.ts' | head
 ```
 
-Read `node_modules/@cofhe/sdk/dist/index.d.ts` (or the equivalent main entry) for top-level exports. Subpath modules live alongside:
+The `dist/` folder ships flat files for each subpath module (verify against the installed `package.json#exports`):
 
 ```
-node_modules/@cofhe/sdk/dist/permits/
-node_modules/@cofhe/sdk/dist/web/
-node_modules/@cofhe/sdk/dist/node/
-node_modules/@cofhe/sdk/dist/adapters/
+node_modules/@cofhe/sdk/dist/core.d.ts
+node_modules/@cofhe/sdk/dist/permits.d.ts
+node_modules/@cofhe/sdk/dist/web.d.ts
+node_modules/@cofhe/sdk/dist/node.d.ts
+node_modules/@cofhe/sdk/dist/adapters.d.ts
+node_modules/@cofhe/sdk/dist/chains.d.ts
 ```
+
+Read `core.d.ts` for the top-level client (`createCofheClient`, `createCofheConfig`, `Encryptable`, `FheTypes`, etc.); `permits.d.ts` for permit utilities.
 
 ### Option B: Fetch from the public repo
 
-```
-WebFetch https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/main/packages/sdk/src/index.ts
-```
-
-The repo is a monorepo with subpackages under `packages/`. Browse via:
+Default branch is `master`. SDK source lives at `packages/sdk/<area>/` (areas: `core`, `permits`, `web`, `node`, `adapters`, `chains`):
 
 ```
-gh api repos/FhenixProtocol/cofhesdk/contents/packages -H "Accept: application/vnd.github+json"
+WebFetch https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/core/index.ts
+WebFetch https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/permits/index.ts
+```
+
+Browse via:
+
+```
+gh api repos/FhenixProtocol/cofhesdk/contents/packages/sdk -H "Accept: application/vnd.github+json"
 ```
 
 ## Find CofheError codes
@@ -42,8 +49,10 @@ The error class is typed with discriminated codes. Read the union to enumerate.
 Remote alternative:
 
 ```
-gh api repos/FhenixProtocol/cofhesdk/contents/packages/sdk/src/errors.ts -H "Accept: application/vnd.github.raw"
+gh api repos/FhenixProtocol/cofhesdk/contents/packages/sdk/core/error.ts -H "Accept: application/vnd.github.raw"
 ```
+
+The enum is `CofheErrorCode` in `core/error.ts`. Each member maps to a `SCREAMING_SNAKE_CASE` string value used as `err.code`.
 
 ## Find the installed @cofhe/sdk version
 
@@ -74,15 +83,15 @@ grep -rn "Encryptable" node_modules/@cofhe/sdk/dist/   # local
 | [miniapp-equle](https://github.com/FhenixProtocol/miniapp-equle) | Per-game permit naming; `decryptForTx` for claim-victory; clean hook decomposition |
 | [encrypted-secret-santa](https://github.com/FhenixProtocol/encrypted-secret-santa) | Both `decryptForView` AND `decryptForTx().withPermit()` in one app |
 | [poc-shielded-stablecoin](https://github.com/FhenixProtocol/poc-shielded-stablecoin) | SSR-safe Proxy singleton; minimal hooks |
-| [selective-disclosure-demo](https://github.com/FhenixProtocol/selective-disclosure-demo) | ACP (Access Control Permit) scoping for selective disclosure |
+| [selective-disclosure-demo](https://github.com/FhenixProtocol/selective-disclosure-demo) | Sharing-permit scoping for selective disclosure |
 
 Use `WebFetch` for raw file pulls; grep by hook name (`useCofhe`, `usePermit`, etc).
 
 ## Find canonical hook patterns
 
 ```
-https://raw.githubusercontent.com/FhenixProtocol/poc-shielded-stablecoin/main/packages/nextjs/hooks/useCofhe.ts
-https://raw.githubusercontent.com/FhenixProtocol/poc-shielded-stablecoin/main/packages/nextjs/hooks/usePermit.ts
+https://raw.githubusercontent.com/FhenixProtocol/poc-shielded-stablecoin/master/packages/nextjs/hooks/useCofhe.ts
+https://raw.githubusercontent.com/FhenixProtocol/poc-shielded-stablecoin/master/packages/nextjs/hooks/usePermit.ts
 https://raw.githubusercontent.com/FhenixProtocol/miniapp-equle/main/packages/cofhe-nextjs/src/app/hooks/useCofhe.ts
 ```
 

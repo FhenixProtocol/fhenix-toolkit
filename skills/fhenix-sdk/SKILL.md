@@ -13,7 +13,7 @@ You activate when the user is writing TypeScript that uses Fhenix's `@cofhe/sdk`
 
 2. **`.connect(publicClient, walletClient)` is mandatory before any `.execute()`.** Without chain context, calls fail with opaque "no chain" errors.
 
-3. **Permits are explicit — no auto-creation.** Unlike legacy `cofhejs`, the new SDK does NOT auto-generate permits. Call `client.permits.getOrCreateSelfPermit({...})` before any `decryptForView` or `decryptForTx().withPermit()` call.
+3. **Permits are explicit — no auto-creation.** Unlike legacy `cofhejs`, the new SDK does NOT auto-generate permits. Call `client.permits.getOrCreateSelfPermit(...)` before any `decryptForView` or `decryptForTx().withPermit()` call. Verify the current signature via `references/lookup-recipes.md`.
 
 4. **Permit expiration is Unix SECONDS, not milliseconds.** `Date.now()` returns ms — divide by 1000.
 
@@ -21,7 +21,7 @@ You activate when the user is writing TypeScript that uses Fhenix's `@cofhe/sdk`
 
 6. **The `InEuintXX` struct doesn't match wagmi's ABI inference** — cast `as any` at the wagmi boundary, or build a typed wrapper.
 
-7. **SSR-unsafe by default.** In Next.js, wrap the client in a Proxy so it lazy-instantiates only in the browser. See `concepts/init-singleton.md`.
+7. **SSR-unsafe by default.** In Next.js, wrap the client in a Proxy so it lazy-instantiates only in the browser. See `references/concepts/init-singleton.md`.
 
 Full rule list: `references/hard-rules.md`.
 
@@ -45,7 +45,7 @@ const cofheClient = createCofheClient(config);
 await cofheClient.connect(publicClient, walletClient);
 ```
 
-For SSR / Next.js: wrap `cofheClient` in a Proxy in `services/cofhe-client.ts`. See `concepts/init-singleton.md`.
+For SSR / Next.js: wrap `cofheClient` in a Proxy in `services/cofhe-client.ts`. See `references/concepts/init-singleton.md`.
 
 ## Default encrypt flow
 
@@ -67,17 +67,25 @@ await writeContractAsync({
 
 ## Default permit flow
 
+Real form per canonical examples (e.g. `miniapp-equle`'s `usePermit.ts`). The first two positional args are `publicClient` / `walletClient` overrides; options is the third:
+
 ```
-const permit = await cofheClient.permits.getOrCreateSelfPermit({
-  issuer: address,
-  name: `myapp-${gameId}`,                                       // scope per-cycle if state cycles
-  expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,    // 30 days, in SECONDS
-});
+const permit = await cofheClient.permits.getOrCreateSelfPermit(
+  undefined,
+  undefined,
+  {
+    issuer: address,
+    name: `myapp-${gameId}`,                                       // scope per-cycle if state cycles
+    expiration: Math.floor(Date.now() / 1000) + 30 * 24 * 3600,    // 30 days, in SECONDS
+  }
+);
 
 const { decryptedValue } = await cofheClient
   .decryptForView(ctHash, FheTypes.Uint64)
   .execute();
 ```
+
+Verify the exact signature against `node_modules/@cofhe/sdk/dist/permits.d.ts` — see `references/lookup-recipes.md`.
 
 ## Concepts to read on demand
 

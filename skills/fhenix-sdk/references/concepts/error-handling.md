@@ -7,33 +7,41 @@
 ## The shape
 
 ```
-import { CofheError } from '@cofhe/sdk';
+import { CofheError, CofheErrorCode } from '@cofhe/sdk';
 
 try {
   const result = await cofheClient.encryptInputs([...]).execute();
 } catch (err) {
   if (err instanceof CofheError) {
+    // err.code is a CofheErrorCode value (SCREAMING_SNAKE string).
+    // err also exposes: cause, hint, context.
     switch (err.code) {
-      case 'KEYS_NOT_INITIALIZED': /* prompt re-init */ break;
-      case 'PERMIT_REQUIRED':       /* call getOrCreateSelfPermit */ break;
-      case 'ACL_DENIED':            /* on-chain allow* missing */ break;
-      case 'NETWORK_ERROR':         /* retry */ break;
-      default:                       throw err;
+      case CofheErrorCode.NotConnected:        /* user not connected — gate UI */ break;
+      case CofheErrorCode.PermitNotFound:      /* call getOrCreateSelfPermit */ break;
+      case CofheErrorCode.UnsupportedChain:    /* wrong network */ break;
+      case CofheErrorCode.DecryptFailed:       /* network refused — likely ACL mismatch */ break;
+      case CofheErrorCode.FetchKeysFailed:     /* transient — retry */ break;
+      default:                                  throw err;
     }
   } else throw err;
 }
 ```
 
-The exact code list evolves — look it up via `references/lookup-recipes.md`. **Don't hard-code assumptions** about codes; check the typed surface.
+**Always verify the live code list** — `CofheErrorCode` is a TypeScript enum in `packages/sdk/core/error.ts`. Run the lookup recipe; don't hard-code without checking. As of this writing the enum has ~40 members; only the user-actionable ones are worth special-casing.
 
 ## Recoverable vs fatal — rough taxonomy
 
+(Map your error codes to one of these buckets at handle-time. Names below are real `CofheErrorCode` values.)
+
 | Type | Examples | Strategy |
 |---|---|---|
-| User action | `PERMIT_REQUIRED`, `WALLET_NOT_CONNECTED` | Trigger UI (create permit, reconnect wallet) |
-| Network transient | `NETWORK_ERROR`, `TIMEOUT` | Retry with backoff |
-| Configuration | `CHAIN_NOT_SUPPORTED`, `KEYS_NOT_INITIALIZED` | Probably a code bug — surface clearly |
-| ACL | `ACL_DENIED` | Contract didn't `allow*` correctly — check the pairing matrix in `concepts/decrypt-view-vs-tx.md` |
+| User action | `NotConnected`, `MissingPublicClient`, `MissingWalletClient`, `PermitNotFound` | Trigger UI (reconnect wallet, create permit) |
+| Network transient | `FetchKeysFailed`, `PublicWalletGetChainIdFailed` | Retry with backoff |
+| Configuration | `UnsupportedChain`, `MissingConfig`, `ChainIdUninitialized`, `AccountUninitialized` | Probably a code bug — surface clearly |
+| Decrypt / ACL | `DecryptFailed`, `DecryptReturnedNull`, `InvalidUtype`, `SealOutputFailed` | Contract didn't `allow*` correctly — check the pairing matrix in `decrypt-view-vs-tx.md` (sibling file) |
+| ZK / proof | `ZkVerifyFailed`, `ZkPackFailed`, `ZkProveFailed`, `ZkUninitialized` | Encryption-side problem — usually init/config |
+| Permits | `InvalidPermitData`, `InvalidPermitDomain`, `CannotRemoveLastPermit` | Permit state corrupted or invariant violated |
+| Init (TFHE) | `InitTfheFailed`, `InitViemFailed`, `InitEthersFailed` | One-time setup failure; surface clearly |
 
 ## Gotchas
 

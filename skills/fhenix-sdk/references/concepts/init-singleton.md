@@ -70,5 +70,5 @@ export function useCofhe() {
 
 - **Don't `await createCofheClient(config)`** — it returns synchronously. The async work happens on first `execute()`.
 - **`isConnected` from wagmi is stale during initial render.** Track init in a Zustand or `useState` flag rather than depending on `isConnected` alone.
-- **`permitVersion` re-render trick** — many apps bump a Zustand counter to force hook re-runs when permits change. See `concepts/permits.md`.
+- **`permitVersion` re-render trick** — many apps bump a Zustand counter to force hook re-runs when permits change. See `permits.md`.
 - **Don't `connect()` more than necessary.** Re-calling on every chain/account change is fine; calling every render is wasteful.
