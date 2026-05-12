@@ -1,6 +1,6 @@
 ---
 name: fhenix-contracts
-description: Use when working on Solidity files importing @fhenixprotocol/cofhe-contracts/FHE.sol or using euint*/ebool/eaddress types. Teaches confidential contract patterns — branchless updates with FHE.select, the four ACL verbs, the three decryption flows, and the confidential-token standards picker. Activates on Fhenix CoFHE contract work.
+description: Use when working on Solidity files importing @fhenixprotocol/cofhe-contracts/FHE.sol or using euint*/ebool/eaddress types. Teaches confidential contract patterns — branchless updates with FHE.select, the four ACL verbs, the two decryption flows, and the confidential-token standards picker. Activates on Fhenix CoFHE contract work.
 ---
 
 # fhenix-contracts — write confidential Solidity for Fhenix CoFHE

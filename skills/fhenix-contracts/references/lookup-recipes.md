@@ -25,13 +25,13 @@ After fetching, grep within the response for the function or type. Quote ~10-20 
 
 ## Find op semantics (does it revert? overflow behavior?)
 
-The cofhe-contracts test suite exercises edge cases. List tests:
+The cofhe-contracts test suite exercises edge cases. Tests live under `contracts/internal/host-chain/test/`:
 
 ```
-https://github.com/FhenixProtocol/cofhe-contracts/tree/main/test
+gh api repos/FhenixProtocol/cofhe-contracts/contents/contracts/internal/host-chain/test
 ```
 
-Browse the directory, find the test file that matches your op, then `WebFetch` the raw file and read the relevant `describe(...)` blocks.
+Browse the directory (subdirs: `decryptResult`, `onChain`, `publiclyAllowed`, etc.), find the test file that matches your op, then `WebFetch` the raw file and read the relevant cases.
 
 ## Find ACL behavior (allowThis vs allowSender vs allowTransient)
 

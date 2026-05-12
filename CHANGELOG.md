@@ -19,4 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added (continued)
 
-- `skills/fhenix-contracts/` — SKILL.md, lookup-recipes, hard-rules, decision-trees, and eight concept files (branchless-update, allow-cascade, encrypted-input, async-decrypt, bit-shift-ratio, operator-pattern, randomness-via-entropy, confidential-token-standards).
+- `skills/fhenix-contracts/` — SKILL.md, lookup-recipes, hard-rules, decision-trees, and seven concept files (branchless-update, allow-cascade, encrypted-input, bit-shift-ratio, operator-pattern, randomness-via-entropy, confidential-token-standards).

@@ -4,7 +4,7 @@
 
 | Standard | Source | Where it lives |
 |---|---|---|
-| `ERC20Confidential` | `@fhenixprotocol/fhenix-confidential-contracts` | Fhenix's own standard for confidential ERC-20s |
+| `ERC20Confidential` | npm: `fhenix-confidential-contracts` | Fhenix's high-level confidential-ERC20 wrapper (ships alongside the lower-level `FHERC20` base class in the same package). |
 | FHERC20 (vendored) | Inline in your repo | Pattern, not a registered standard. Each project copies and extends it. |
 | ERC-7984 | Ethereum EIP draft | Emerging cross-protocol standard; not finalized |
 

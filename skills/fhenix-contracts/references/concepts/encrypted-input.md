@@ -47,5 +47,6 @@ On-chain (your contract):
 
 - **`trivialEncrypt` (via `FHE.asEuintXX(literal)`) is NOT the same as `asEuintXX(InEuintXX)`.** The literal version passes the plaintext through calldata in cleartext.
 - **The `signature` field is from the user's wallet, not from the SDK alone.** Stale signatures (different account, different chain) revert.
+- **Re-verifying an `InEuintXX` in the same tx is idempotent** — returns the same handle. Across transactions, the signature is single-use; re-submitting the same struct in a later tx will revert on signature replay.
 - **`utype` must match the function signature exactly.** Passing an `InEuint128` to a function expecting `InEuint64` reverts on the signature check.
 - **Security zones can expire.** If the user's SDK fetched keys from an old zone, `asEuintXX` reverts. Have them refresh the client.

@@ -56,7 +56,7 @@ Real-world picks:
 ```
 Is your use case a vanilla confidential ERC-20?
 ├── Yes  →  ERC20Confidential
-│           (@fhenixprotocol/fhenix-confidential-contracts)
+│           (npm: `fhenix-confidential-contracts`)
 └── No   →  Do you need to extend transfer semantics
             (callbacks, AVS, custom approval flows)?
             ├── Yes  →  Vendor FHERC20
