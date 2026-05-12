@@ -2,15 +2,15 @@
 
 Claude Code plugin for building confidential smart contracts and dApps on **Fhenix CoFHE** — the FHE coprocessor — using `FHE.sol` and `@cofhe/sdk`.
 
-Five skills, one install:
+Four skills shipping in v1 (one more planned):
 
 | Skill | Purpose | Activates on |
 |---|---|---|
 | `fhenix-contracts` | Write confidential Solidity contracts | Files importing `FHE.sol` or using `euint*` / `ebool` |
 | `fhenix-sdk` | Integrate `@cofhe/sdk` (encrypt, decrypt, permits) | Files importing `@cofhe/sdk` |
-| `fhenix-migrate` | Migrate from legacy `cofhejs` to `@cofhe/sdk` | Files importing `cofhejs` |
 | `fhenix-review` | Audit confidential code for ACL bugs, decrypt-flow mismatches, plaintext leaks | PR-review flows; explicit "audit this" prompts |
 | `fhenix-tests` | Write tests for confidential contracts (Foundry mocks, Hardhat plugin) | Test files importing FHE.sol or `@cofhe/sdk` |
+| `fhenix-migrate` *(v1.5)* | Migrate from legacy `cofhejs` to `@cofhe/sdk` | Files importing `cofhejs` |
 
 ## Install (Claude Code)
 

@@ -22,7 +22,7 @@ The plugin curates **timeless wisdom** (concepts, decision trees, gotchas) and t
 
 ### In scope (v1)
 
-- Five skills: `fhenix-contracts`, `fhenix-sdk`, `fhenix-migrate`, `fhenix-review`, `fhenix-tests`.
+- Four skills: `fhenix-contracts`, `fhenix-sdk`, `fhenix-review`, `fhenix-tests`.
 - One optional companion subagent: `fhe-reviewer`, invoked from the review skill for deep audit passes.
 - Lookup-recipe-driven references (concept files + live-lookup instructions, no embedded code listings).
 - CI: link-check, lookup-recipe-smoke.
@@ -30,6 +30,7 @@ The plugin curates **timeless wisdom** (concepts, decision trees, gotchas) and t
 
 ### Deferred (v1.5+)
 
+- `fhenix-migrate` skill — migration from legacy `cofhejs` to `@cofhe/sdk`. Spec retained in section 5.3 for reference; ship timing TBD.
 - Slash commands: `/fhenix:scaffold-dapp`, `/fhenix:scaffold-contract`.
 - Auto-generated FHE.sol reference (parse source, emit markdown) — hand-curated lookup recipes are sufficient for v1.
 - Localizations (English only at v1).
@@ -65,7 +66,9 @@ Each skill activates on its own triggers (file imports, file extensions, or user
 - **Teaches:** the canonical init recipe (`createCofheConfig` → `createCofheClient` → `connect(publicClient, walletClient)`) with the SSR-safe Proxy singleton pattern; the three-way decrypt decision (`decryptForView` vs `decryptForTx().withPermit()` vs `decryptForTx().withoutPermit()`); permit lifecycle (`getOrCreateSelfPermit`, ACP scoping, permit-version re-render trick); the `Encryptable.uintN` input flow and the `{ctHash, securityZone, utype, signature}` ABI cast; **Unix seconds (not ms)** trap.
 - **Concepts shipped:** `init-ssr-safe-singleton`, `encrypt-input-flow`, `decrypt-view-vs-tx`, `permit-lifecycle`, `acp-scoping`, `permit-version-rerender`, `error-handling-cofheError`.
 
-### 5.3 `fhenix-migrate`
+### 5.3 `fhenix-migrate` (deferred to v1.5)
+
+This skill is designed but not in v1 scope. Spec retained so the eventual implementation has a target. The other four skills cover enough of new-development surface to ship the plugin without it.
 
 - **Activates on:** files importing `cofhejs` (any subpath); presence of `unseal(`, `Result<`, `cofhejs.initialize`, or `cofhejs.encrypt(`; explicit "migrate from cofhejs."
 - **Teaches:** a seven-step migration playbook — inventory every decrypt site, classify each as **UI view** or **protocol reveal**, then convert init → encrypt → decrypt → error handling → permits → contract-side `FHE.decrypt` → `publishDecryptResult` / `verifyDecryptResult`. Plus the silent footguns: `.withoutPermit()` requires on-chain `FHE.allowPublic`; `Result<T>` → typed `CofheError`; auto-permits gone.
@@ -171,12 +174,12 @@ Patch and minor CoFHE releases don't trigger this — the curated content should
 
 PRs land into `main` in order:
 
-1. **Initial commit (this commit):** README, LICENSE, CHANGELOG, plugin manifest, marketplace manifest, compatibility matrix, CI workflows, spec doc, `.gitignore`. Direct commit (empty repo, no PR needed).
+1. **Initial commit:** README, LICENSE, CHANGELOG, plugin manifest, marketplace manifest, compatibility matrix, CI workflows, spec doc, `.gitignore`. Direct commit (empty repo, no PR needed).
 2. **PR #1:** `skills/fhenix-contracts/` — SKILL.md, lookup-recipes, hard-rules, decision-trees, concepts/.
 3. **PR #2:** `skills/fhenix-sdk/` — same shape.
-4. **PR #3:** `skills/fhenix-migrate/` — playbook + concepts.
-5. **PR #4:** `skills/fhenix-review/` + `agents/fhe-reviewer.md` — gotchas + checklist + subagent.
-6. **PR #5:** `skills/fhenix-tests/` — Foundry vs Hardhat + test patterns.
+4. **PR #3:** `skills/fhenix-review/` + `agents/fhe-reviewer.md` — gotchas + checklist + subagent.
+5. **PR #4:** `skills/fhenix-tests/` — Foundry vs Hardhat + test patterns.
+6. **(v1.5):** `skills/fhenix-migrate/` — deferred. Spec retained in section 5.3 for when it lands.
 
 Each PR is independently reviewable; merging them in order means the plugin is incrementally installable from any point in the sequence.
 
