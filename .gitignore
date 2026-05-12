@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.local
+.env.*.local
+dist/
+build/
+.claude/scheduled_tasks.lock
+.claude/tmp/

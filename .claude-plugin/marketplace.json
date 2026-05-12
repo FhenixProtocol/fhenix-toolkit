@@ -1,0 +1,16 @@
+{
+  "name": "fhenix-toolkit",
+  "description": "Fhenix Protocol's official Claude Code plugin for CoFHE development.",
+  "owner": {
+    "name": "Fhenix Protocol",
+    "url": "https://www.fhenix.io"
+  },
+  "plugins": [
+    {
+      "name": "fhenix-toolkit",
+      "source": ".",
+      "description": "Skills for building confidential smart contracts and dApps with Fhenix CoFHE.",
+      "version": "0.1.0"
+    }
+  ]
+}

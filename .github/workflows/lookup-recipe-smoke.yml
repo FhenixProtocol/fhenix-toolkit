@@ -1,0 +1,26 @@
+name: lookup-recipe-smoke
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify raw access to cofhe-contracts FHE.sol
+        run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/FHE.sol
+
+      - name: Verify GitHub API access to cofhesdk source tree
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: curl -fsSL -o /dev/null -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/FhenixProtocol/cofhesdk/contents/packages/sdk/src"
+
+      - name: Verify docs site reachable
+        run: curl -fsSL -o /dev/null https://cofhe-docs.fhenix.zone/
+
+      - name: Placeholder for per-skill recipes
+        run: echo "Per-skill lookup recipes are added as skills land in skills/<name>/references/lookup-recipes.md."
