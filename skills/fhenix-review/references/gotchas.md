@@ -28,9 +28,9 @@ Every encrypted op whose result is stored to state needs `FHE.allowThis(result)`
 
 `if (FHE.gt(a, b))` / `require(ebool)` / `while (ebool)` — none of these behave like the developer expects. The Solidity comparison is against the ciphertext handle (a `uint256`), not the encrypted value. Use `FHE.select(cond, a, b)`.
 
-### G6. `FHE.decrypt` is asynchronous
+### G6. Legacy `FHE.decrypt` / `getDecryptResultSafe` references
 
-`FHE.decrypt(ct)` is a request, not a read. The plaintext appears in a later transaction via `FHE.getDecryptResultSafe(ct)`. Any code that expects synchronous return is broken.
+The on-chain async decrypt flow (`FHE.decrypt(ct)` + later `getDecryptResultSafe(ct)`) has been removed from the library. All decryption is now SDK-mediated (`decryptForView` / `decryptForTx` + on-chain `FHE.verifyDecryptResult` for tx-bound reveals). Any contract still calling `FHE.decrypt` is stale code that must be migrated — flag and convert per the `fhenix-contracts` skill's decryption-flow decision tree. See also G14–G15 for the SDK-side pairing rules.
 
 ### G7. Uninitialized encrypted state acts as zero
 

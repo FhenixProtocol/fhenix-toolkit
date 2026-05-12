@@ -10,7 +10,7 @@ You activate on review/audit contexts: a PR is open, the user says "audit this" 
 ## What to look for, in order
 
 1. **ACL bugs** — missing `FHE.allowThis` after a stored encrypted write; mismatched ACL pairing (e.g., `decryptForTx().withoutPermit()` without `allowPublic`); `allowSender` granted to an attacker-controlled `msg.sender` for someone else's handle.
-2. **Decrypt-flow mismatches** — `decryptForView` used where `decryptForTx` is needed (or vice versa); `FHE.decrypt(...)` treated synchronously.
+2. **Decrypt-flow mismatches** — `decryptForView` used where `decryptForTx` is needed (or vice versa); legacy `FHE.decrypt(...)` / `getDecryptResultSafe(...)` references that should have been migrated to the SDK-mediated flow.
 3. **Plaintext leaks** — `trivialEncrypt(literal)` for secret values; plaintext values stored / emitted alongside their encrypted twins; revert paths that branch on what should be private.
 4. **Branching on `ebool`** — `if (FHE.gt(...))`, `require(FHE.gt(...))`, `while (...)` — must be `FHE.select`.
 5. **Confidentiality ≠ anonymity** — the dApp claims privacy but leaks via gas patterns, event-fact, or tx graph.

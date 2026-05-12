@@ -40,8 +40,14 @@ gh api repos/FhenixProtocol/cofhesdk/contents/packages/sdk/src/errors.ts -H "Acc
 ## Verify ACL behavior in cofhe-contracts internals
 
 ```
-https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/Impl.sol
-https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/TaskManager.sol
+https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/host-chain/contracts/TaskManager.sol
+https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/host-chain/contracts/ACL.sol
+```
+
+If the layout has shifted (it has before), browse the live directory:
+
+```
+gh api repos/FhenixProtocol/cofhe-contracts/contents/contracts/internal
 ```
 
 ## Confirm the canonical pattern for a given task
