@@ -85,7 +85,7 @@ The relevant API surface (verify via `references/lookup-recipes.md`):
 
 - `CreateSharingPermitOptions` — options type for sharing permits.
 - `ImportSharedPermitOptions` — options for the recipient importing the signed permit.
-- `PermitUtils` in `packages/sdk/permits/permit.js` exposes the low-level creation; the canonical app-level usage is in the `selective-disclosure-demo` repo.
+- `PermitUtils` in `packages/sdk/permits/permit.ts` exposes the low-level creation; the canonical app-level usage is in the `selective-disclosure-demo` repo.
 
 Conceptually:
 

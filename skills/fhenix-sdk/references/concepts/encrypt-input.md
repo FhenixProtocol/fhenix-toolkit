@@ -43,6 +43,34 @@ The factory functions on `Encryptable` accept the value as `string | bigint` (ma
 
 Always look up the current exact name list (see `references/lookup-recipes.md`) — the surface evolves.
 
+## Avoiding `as any` at the wagmi boundary
+
+The single `as any` cast at the call site is fine for one-off use, but it spreads if every encrypted-input call site repeats it. Wrap the cast once in a typed helper and reuse it:
+
+```
+// types.ts
+import type { InEuintXX } from './generated';  // or your shape
+
+export function asInEuintArg<T>(e: {
+  ctHash: string;
+  securityZone: number;
+  utype: number;
+  signature: string;
+}): T {
+  return {
+    ctHash: e.ctHash,
+    securityZone: e.securityZone,
+    utype: e.utype,
+    signature: e.signature as `0x${string}`,
+  } as unknown as T;
+}
+
+// at the call site
+args: [asInEuintArg(encrypted)],
+```
+
+This contains the `as any` to one file, makes intent explicit (a wagmi/viem boundary cast, not arbitrary widening), and lets you tighten the return type as wagmi inference improves.
+
 ## Canonical examples
 
 - **Auction bid input.**
