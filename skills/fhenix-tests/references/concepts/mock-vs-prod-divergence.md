@@ -57,7 +57,6 @@ Foundry mocks and the Hardhat plugin's MOCK mode simulate CoFHE but with shortcu
 - **Security zone enforcement** — mocks may accept any zone; testnet enforces the configured one.
 - **MPC ordering** — multi-party decryption ordering matters in real network, single-process in mocks.
 - **Network outages / retries** — mocks don't simulate.
-- **Pre-image collisions** — mocks may not enforce TaskManager's full hash discipline.
 
 ## Practical advice
 

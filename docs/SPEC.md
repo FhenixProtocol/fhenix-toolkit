@@ -105,7 +105,7 @@ Concept files reference **public example repos by URL**. When Claude needs a con
 - `FhenixProtocol/miniapp-equle`
 - `FhenixProtocol/encrypted-secret-santa`
 - `FhenixProtocol/cofhe-hardhat-starter`
-- `FhenixProtocol/cofhe-foundry-mocks`
+- `FhenixProtocol/cofhe-mock-contracts` (formerly `cofhe-foundry-mocks`, archived; current home for Foundry/Hardhat mocks — npm: `@fhenixprotocol/cofhe-mock-contracts`)
 - `marronjo/fhe-hooks` (vetted community Uniswap v4 hooks example)
 
 Adding more requires a PR that updates this spec.

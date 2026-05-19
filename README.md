@@ -33,7 +33,7 @@ This plugin teaches Claude **how to look up current information**, not snapshots
 - `@fhenixprotocol/cofhe-contracts` — https://github.com/FhenixProtocol/cofhe-contracts
 - `@cofhe/sdk` — https://github.com/FhenixProtocol/cofhesdk
 - Hardhat starter — https://github.com/FhenixProtocol/cofhe-hardhat-starter
-- Foundry mocks — https://github.com/FhenixProtocol/cofhe-foundry-mocks
+- Foundry / Hardhat mocks — https://github.com/FhenixProtocol/cofhe-mock-contracts (the old `cofhe-foundry-mocks` repo is archived)
 
 ## License
 

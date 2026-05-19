@@ -1,6 +1,6 @@
 ---
 name: fhenix-tests
-description: Use when writing or extending tests for confidential CoFHE code — Foundry mocks, Hardhat plugin, encrypted input fixtures, SDK decrypt flows (decryptForView and decryptForTx) in tests. Activates on .test.ts / .t.sol files importing FHE.sol or @cofhe/sdk, on files under tests/contracts/, or on prompts like "test this confidential contract."
+description: Use when writing or extending tests for confidential CoFHE code — Foundry mocks, Hardhat plugin, encrypted input fixtures, SDK decrypt flows (decryptForView and decryptForTx) in tests. Activates on .test.ts / .t.sol files importing FHE.sol, @cofhe/sdk, @cofhe/hardhat-plugin, or @fhenixprotocol/cofhe-mock-contracts; on files under tests/contracts/; or on prompts like "test this confidential contract."
 ---
 
 # fhenix-tests — test confidential CoFHE contracts and dApps

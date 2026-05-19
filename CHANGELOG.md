@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository scaffolding: README, LICENSE, CHANGELOG, plugin manifest, marketplace manifest, compatibility matrix.
 - `link-check` and `lookup-recipe-smoke` CI workflows.
 - Design spec at `docs/SPEC.md`.
-- `skills/fhenix-tests/` — SKILL.md, lookup-recipes, hard-rules, decision-trees, and six concept files (foundry-mocks-setup, hardhat-plugin-setup, testing-encrypted-input, testing-async-decrypt, testing-multi-permit, mock-vs-prod-divergence).
+- `skills/fhenix-tests/` — SKILL.md, lookup-recipes, hard-rules, decision-trees, and six concept files (foundry-mocks-setup, hardhat-plugin-setup, testing-encrypted-input, testing-decrypt-flows, testing-multi-permit, mock-vs-prod-divergence).
 
 ### Changed
 
