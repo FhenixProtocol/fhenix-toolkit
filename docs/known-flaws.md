@@ -50,9 +50,9 @@ A future enhancement: smoke checks should `grep` for the target symbol in the fe
 
 `.github/CODEOWNERS` routes everything to `@fhenixprotocol/protocol-team` + `@toml01`. Per-area routing (contracts team for `/plugins/fhenix-toolkit/skills/fhenix-contracts/`, SDK team for `/plugins/fhenix-toolkit/skills/fhenix-sdk/`, etc.) was intentionally deferred — we wanted to mirror the simple cofhe pattern first. Revisit when the maintainer count grows.
 
-### No tagged release yet
+### Default install floats on default-branch HEAD
 
-The repo is public and installable, but no version has been tagged. `/plugin install fhenix-toolkit@FhenixProtocol` resolves to the default branch HEAD, so installs aren't reproducible — what you got today may differ from what someone else gets next week. v1.0 tagging is the next milestone; see [`docs/release-process.md`](release-process.md).
+`v0.1.0` is tagged and a GitHub release exists, but the default install command (`/plugin install fhenix-toolkit`) still resolves to whatever's on `main` right now, not the tagged release. Users who want reproducibility have to pin explicitly (`/plugin install fhenix-toolkit@v0.1.0`, syntax TBC). Until we publish a clear "how to pin" recipe in the README, expect installs to drift quietly as `main` advances between releases.
 
 ## Inherent limitations (not gaps — by design)
 

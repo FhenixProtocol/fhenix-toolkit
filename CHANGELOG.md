@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Install command in README + CHANGELOG + known-flaws — `@<suffix>` is the marketplace name (`fhenix-toolkit`), not the GitHub owner. The short form `/plugin install fhenix-toolkit` (no suffix) is what users should run.
+
 ## [0.1.0] — 2026-05-25
 
 First public release. The four v1 skills, the audit subagent, the CI, the docs, the brand.
@@ -50,7 +54,7 @@ First public release. The four v1 skills, the audit subagent, the CI, the docs, 
 
 ### Notes
 
-- **Install:** `/plugin marketplace add FhenixProtocol/fhenix-toolkit` then `/plugin install fhenix-toolkit@FhenixProtocol`.
+- **Install:** `/plugin marketplace add FhenixProtocol/fhenix-toolkit` then `/plugin install fhenix-toolkit`.
 - **Repo is public.** Anyone can install.
 - **`fhenix-migrate`** (legacy `cofhejs` → `@cofhe/sdk`) is deferred to v1.5. Spec retained at `docs/SPEC.md` §5.3.
 - **`on-cofhe-release.yml`** (auto-PR on upstream majors) deferred to v1.0; manual bump flow documented in `docs/release-process.md`.

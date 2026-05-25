@@ -21,7 +21,7 @@
 
 ```
 /plugin marketplace add FhenixProtocol/fhenix-toolkit
-/plugin install fhenix-toolkit@FhenixProtocol
+/plugin install fhenix-toolkit
 ```
 
 Then ask Claude *"help me write a confidential ERC20"* or *"audit this FHE.sol contract"* — the right skill activates on its own.
