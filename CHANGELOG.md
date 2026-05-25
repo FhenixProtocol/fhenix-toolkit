@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-05-25
+
+Patch release — install-command correction.
+
 ### Fixed
 
-- Install command in README + CHANGELOG + known-flaws — `@<suffix>` is the marketplace name (`fhenix-toolkit`), not the GitHub owner. The short form `/plugin install fhenix-toolkit` (no suffix) is what users should run.
+- **Install command.** The README, CHANGELOG (v0.1.0 block), and known-flaws all instructed `/plugin install fhenix-toolkit@FhenixProtocol`. This fails with `Marketplace "FhenixProtocol" not found` — the `@<suffix>` is the **marketplace name** (defined by the `name` field in `marketplace.json`, which is `fhenix-toolkit`), not the GitHub owner. The short form `/plugin install fhenix-toolkit` (no suffix) is what users should run; the explicit equivalent is `/plugin install fhenix-toolkit@fhenix-toolkit`.
+
+### Changed
+
+- `docs/known-flaws.md` — the "No tagged release yet" gap from v0.1.0 was replaced with "Default install floats on default-branch HEAD." v0.1.0 is now tagged, but `/plugin install fhenix-toolkit` still resolves to whatever's on `main`, not the tagged release. Explicit-pin recipe still TBC.
 
 ## [0.1.0] — 2026-05-25
 
@@ -59,4 +67,5 @@ First public release. The four v1 skills, the audit subagent, the CI, the docs, 
 - **`fhenix-migrate`** (legacy `cofhejs` → `@cofhe/sdk`) is deferred to v1.5. Spec retained at `docs/SPEC.md` §5.3.
 - **`on-cofhe-release.yml`** (auto-PR on upstream majors) deferred to v1.0; manual bump flow documented in `docs/release-process.md`.
 
+[0.1.1]: https://github.com/FhenixProtocol/fhenix-toolkit/releases/tag/v0.1.1
 [0.1.0]: https://github.com/FhenixProtocol/fhenix-toolkit/releases/tag/v0.1.0
