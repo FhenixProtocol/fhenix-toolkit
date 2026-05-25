@@ -16,9 +16,11 @@ Every encrypted op whose result is stored to state needs `FHE.allowThis(result)`
 
 `FHE.allowTransient(ct, addr)` looks like a tighter permission, but at the Solidity level it produces the same ACL update as `FHE.allow(ct, addr)`. The transient lifetime is enforced by the network, not the contract. Don't rely on it for in-contract security boundaries.
 
-### G3. Downcasting type doesn't truncate the ciphertext
+### G3. Downcasting silently truncates (modular reduction, not saturation)
 
-`FHE.asEuint8(euint64Val)` changes the type tag but does NOT truncate the underlying value. Subsequent operations may produce surprising results if the original value exceeded `uint8` range.
+`FHE.asEuint8(euint64Val)` performs a real homomorphic narrowing — the FHE engine runs `<FheUint8>::cast_from(FheUint64)`, which discards the high bits inside the ciphertext (modular reduction to the target width). Decryption of `asEuint8(enc(300))` yields `300 mod 256 = 44`, not `300` and not a revert. There is no saturation, no overflow flag, and no on-chain check that the source fits in the target width.
+
+**Smell:** any `FHE.asEuintN(x)` where `x` is wider than `N` and the surrounding code seems to assume the value "fits". If the protocol needs saturation or rejection on overflow, build it explicitly with `FHE.min(x, asEuintN(MAX))` or a range-check + `select`.
 
 ### G4. `trivialEncrypt` exposes plaintext in calldata
 

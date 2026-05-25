@@ -77,7 +77,7 @@ This skill is designed but not in v1 scope. Spec retained so the eventual implem
 ### 5.4 `fhenix-review`
 
 - **Activates on:** PR-review flows; user prompts like "audit this", "is this safe", "review my FHE code"; files matching either the contracts or SDK triggers *during* a review context.
-- **Teaches:** the gotcha catalog (15+ items including uninitialized-CT-defaults-to-zero; `allowTransient` is Solidity-identical to `allow`; downcast doesn't truncate ciphertext; `trivialEncrypt` makes the plaintext visible in calldata; `withoutPermit` silent-fail; gas-pattern leakage; event-emit leakage; confidentiality ≠ anonymity; encrypted-`approve` not at parity); security checklist for confidential contracts; "Proof of Plaintext Input" pattern for validating `InEuintXX` arrivals.
+- **Teaches:** the gotcha catalog (15+ items including uninitialized-CT-defaults-to-zero; `allowTransient` is Solidity-identical to `allow`; downcast silently truncates by modular reduction (no saturation, no overflow check); `trivialEncrypt` makes the plaintext visible in calldata; `withoutPermit` silent-fail; gas-pattern leakage; event-emit leakage; confidentiality ≠ anonymity; encrypted-`approve` not at parity); security checklist for confidential contracts; "Proof of Plaintext Input" pattern for validating `InEuintXX` arrivals.
 - **Companion subagent:** `agents/fhe-reviewer.md`, invoked for deeper review passes. The subagent loads the full gotcha catalog up front; the main skill stays lean.
 
 ### 5.5 `fhenix-tests`
