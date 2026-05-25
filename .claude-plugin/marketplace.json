@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "fhenix-toolkit",
-      "source": ".",
+      "source": "./",
       "description": "Skills for building confidential smart contracts and dApps with Fhenix CoFHE.",
       "version": "0.1.0"
     }
