@@ -1,6 +1,6 @@
 {
   "name": "fhenix-toolkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Build confidential smart contracts and dApps with Fhenix CoFHE (FHE.sol + @cofhe/sdk).",
   "author": {
     "name": "Fhenix Protocol",
