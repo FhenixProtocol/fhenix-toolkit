@@ -4,6 +4,16 @@
 
 A permit is a signed authorization that lets the SDK ask the threshold network for plaintext on behalf of a user. Permits replace the legacy `cofhejs` auto-permit; they are now explicit, scoped, and time-bounded.
 
+## The three permit types
+
+| Type | Purpose | Signed by | Recipient |
+|---|---|---|---|
+| `SelfPermit` | Decrypt your own data | you | you (same address) |
+| `SharingPermit` | Authorize someone else to decrypt your data | issuer | a specific recipient address |
+| `RecipientPermit` | What the recipient holds locally after importing a `SharingPermit` | original issuer (replayed) + recipient (proves possession) | recipient |
+
+Self-permits are by far the most common — covered below. Sharing/recipient flow lives in its own concept file: `sharing-permits.md`.
+
 ## Permit operations
 
 The exact signatures are versioned — always verify against the installed `node_modules/@cofhe/sdk/dist/permits.d.ts` (see `references/lookup-recipes.md`). The canonical examples below mirror what `miniapp-equle/packages/cofhe-nextjs/src/app/hooks/usePermit.ts` does today.
@@ -77,24 +87,9 @@ useEffect(() => {
 
 Bump `permitVersion` after `createSelf` / `removePermit`.
 
-## Sharing permits — selective disclosure
+## Sharing permits
 
-The SDK supports **sharing permits**: the issuer signs a permit naming a specific recipient; the recipient can then decrypt the issuer's value via the threshold network. No one else can.
-
-The relevant API surface (verify via `references/lookup-recipes.md`):
-
-- `CreateSharingPermitOptions` — options type for sharing permits.
-- `ImportSharedPermitOptions` — options for the recipient importing the signed permit.
-- `PermitUtils` in `packages/sdk/permits/permit.ts` exposes the low-level creation; the canonical app-level usage is in the `selective-disclosure-demo` repo.
-
-Conceptually:
-
-1. Issuer creates a sharing permit scoped to a recipient address.
-2. Issuer ships the serialized permit JSON to the recipient off-chain (out-of-band).
-3. Recipient imports it into their own client and decrypts the issuer's value.
-4. Chain has no record of the disclosure.
-
-This is the selective-disclosure pattern: prove a fact to one party without revealing it on-chain. Exact method names and option fields vary across SDK versions — read the installed `dist/permits.d.ts` and the canonical example before authoring.
+Use a sharing permit when one user (issuer) needs to authorize another (recipient) to decrypt the issuer's data — selectively, off-chain, without granting on-chain ACL access. Full flow, concrete code, and gotchas in `sharing-permits.md`.
 
 ## Canonical examples
 
@@ -106,9 +101,8 @@ This is the selective-disclosure pattern: prove a fact to one party without reve
   https://github.com/FhenixProtocol/encrypted-secret-santa
   → `packages/nextjs/hooks/useSecretSanta.ts`. Calls `getOrCreateSelfPermit(undefined, undefined, { issuer, name: 'Secret Santa', expiration })`.
 
-- **Selective disclosure — sharing permit scoping.**
+- **Selective disclosure — sharing permit scoping.** Concrete code is in `sharing-permits.md`. Canonical repo:
   https://github.com/FhenixProtocol/selective-disclosure-demo
-  → Grep for `createSharing` / `importShared` in the app code to find the canonical call sites.
 
 ## Gotchas
 

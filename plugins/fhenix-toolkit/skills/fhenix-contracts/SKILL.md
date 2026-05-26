@@ -20,6 +20,9 @@ Tight summary. Full explanations: `references/hard-rules.md`.
 7. **Order `allow*` before emit / return** — the off-chain network observes handles in event/return order and expects ACL bits set first.
 8. **Uninitialized encrypted state acts as zero** — `euint32 x;` reads as `FHE.asEuint32(0)`; track presence with a separate plaintext flag.
 9. **Both arms of `FHE.select` always execute** — no short-circuit. For `eaddress`, use `FHE.asEaddress(address(0))` as the false-arm sentinel.
+10. **`allowPublic` / `allowGlobal` are irreversible** — there is no `revokePublic`. Treat them as "publish to the world."
+11. **Use ERC-1167 clones, not `new`, for large FHE contracts** — `new` embeds child creation code; FHE contracts bust the 24KB EIP-170 limit fast.
+12. **`allowTransient` vs `allow` — pick by lifetime** — transient grants don't survive the current tx; never use for SDK decrypts. (`concepts/allow-transient.md`)
 
 ## The four ACL verbs
 
@@ -57,6 +60,8 @@ Each `references/concepts/<name>.md` is one focused pattern with links to canoni
 
 - `branchless-update.md` — `FHE.select` instead of `if` / `require`.
 - `allow-cascade.md` — re-grant access after every derivation; permissions don't inherit.
+- `handle-lifecycle-backfill.md` — re-grant helpers, O(N) backfill on new authorized addresses, and the `grantBalanceAccess` pattern for FHERC20 external handles.
+- `allow-transient.md` — when to reach for `FHE.allowTransient` vs persistent `FHE.allow`.
 - `encrypted-input.md` — `InEuintXX` handling from client to chain.
 - `bit-shift-ratio.md` — cheap percentage approximations via `FHE.shr`.
 - `operator-pattern.md` — replacing ERC-20 allowance for ciphertexts.

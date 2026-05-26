@@ -23,6 +23,14 @@ You activate when the user is writing TypeScript that uses Fhenix's `@cofhe/sdk`
 
 7. **SSR-unsafe by default.** In Next.js, wrap the client in a Proxy so it lazy-instantiates only in the browser. See `references/concepts/init-singleton.md`.
 
+8. **`issuer` must equal the connected signer.** Always derive `issuer` from `client.getSnapshot().account` — never hardcode. Hardcoding is the single most common cause of "Invalid issuer signature." See `references/concepts/permit-issuer-gotcha.md`.
+
+9. **`/web` and `/node` are not interchangeable.** `/node` is a strict subset. Don't alias `web → node` in your bundler. See `references/concepts/entry-points-web-vs-node.md`.
+
+10. **Declare `@cofhe/abi` explicitly and pin it with `@cofhe/sdk`.** `@cofhe/sdk` imports from it but doesn't declare it as a runtime dep. Pin both versions (e.g. via `pnpm-workspace.yaml` overrides) so transitives can't drift.
+
+11. **Don't externalize `@cofhe/sdk` server-side.** In Next.js use `transpilePackages: ['@cofhe/sdk']`, NOT `serverExternalPackages`. See `references/concepts/bundler-config.md`.
+
 Full rule list: `references/hard-rules.md`.
 
 ## The three decryption modes
@@ -90,9 +98,15 @@ Verify the exact signature against `node_modules/@cofhe/sdk/dist/permits.d.ts` �
 ## Concepts to read on demand
 
 - `init-singleton.md` — SSR-safe Proxy singleton (Next.js / wagmi).
+- `entry-points-web-vs-node.md` — `/web` vs `/node` subpath imports and what each exports.
+- `bundler-config.md` — full Next.js `next.config.js` and Vite `vite.config.ts` recipes for the SDK's WASM, top-level await, CJS interop. Includes the Vite blank-page diagnostic checklist.
 - `encrypt-input.md` — `Encryptable.uintN`, the struct cast, multi-input batching.
 - `decrypt-view-vs-tx.md` — the three modes and their pairings with on-chain `allow*`.
-- `permits.md` — self permits, ACP scoping, expiration, `permitVersion` re-render trick.
+- `permits.md` — the three permit types, self-permit lifecycle, scoping, expiration, `permitVersion` re-render trick.
+- `sharing-permits.md` — issuer/recipient flow for selective off-chain disclosure with concrete code.
+- `permit-issuer-gotcha.md` — "Invalid issuer signature," EOA vs SA, ERC-6492 not-deployed pitfall.
+- `permit-dedup.md` — avoiding double wallet popups under React strict mode / concurrent callers.
+- `debugging-decryption.md` — diagnostic playbook: client state, on-chain `isAllowed`, retry, stale-cache.
 - `error-handling.md` — typed `CofheError`, recoverable vs fatal patterns.
 - `hooks-pattern.md` — `useCofhe`, `usePermit`, Zustand integration.
 

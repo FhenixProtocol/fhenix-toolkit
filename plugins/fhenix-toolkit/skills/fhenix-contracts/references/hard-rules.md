@@ -77,3 +77,33 @@ Call `FHE.allowThis(x)` (and other `allow*` calls) **before** emitting events or
 ## Rule 9: Both branches of `FHE.select` always execute
 
 There's no short-circuit. If one arm is expensive, both costs are paid. For `eaddress`, the false arm must also be an `eaddress` — use `FHE.asEaddress(address(0))` as a sentinel if no meaningful prior value exists.
+
+## Rule 10: `allowPublic` / `allowGlobal` are irreversible
+
+`FHE.allowPublic(ct)` (alias: `FHE.allowGlobal(ct)`) makes the ciphertext decryptable by anyone. There is no `revokePublic` or `revokeGlobal`. Once a handle is published, every observer who recorded that handle can decrypt it forever.
+
+Treat these calls as "publish this value to the world." Only reach for them when the value is settlement-revealed by design (winning auction bid after `requestSettlement`, claim-of-victory plaintext, etc.). See `concepts/branchless-update.md` and the canonical sealed-bid auction example.
+
+## Rule 11: Use ERC-1167 clones, not `new`, for large FHE contracts
+
+Solidity's `new Contract(...)` embeds the child's full creation code in the factory's bytecode. An FHE contract is rarely under 24 KB on its own; a factory that `new`s one busts EIP-170 (24,576-byte runtime limit) almost immediately.
+
+Use OpenZeppelin's `Clones` (ERC-1167 minimal proxies) instead:
+
+```solidity
+import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
+
+address impl;  // deployed once, holds all the logic
+
+function createChild(...) external returns (address) {
+    address proxy = Clones.clone(impl);
+    IChild(proxy).initialize(...);   // Initializable, not constructor
+    return proxy;
+}
+```
+
+Children must be `Initializable` (no `constructor`) and the factory holds the implementation address. This trades a small per-call cost (proxy delegatecall) for keeping the factory itself well under the size limit, regardless of how big the child grows.
+
+## Rule 12: `allowTransient` ≠ `allow` — pick by lifetime
+
+`FHE.allowTransient(ct, addr)` grants access only for the rest of the current transaction; nothing persists. Use it for in-tx cross-contract handoffs to avoid bloating the persistent ACL. Use `FHE.allow` whenever the grant must outlive the tx (any SDK decrypt, any user follow-up). See `concepts/allow-transient.md` for the decision tree.

@@ -4,6 +4,21 @@
 
 User-supplied encrypted values enter the contract as `InEuintXX` (or `InEbool`, `InEaddress`) — a struct holding the ciphertext hash, security zone, type tag, and a signature from the SDK. The on-chain library verifies the signature and registers the handle when you call `FHE.asEuintXX(in)`. The returned `euintXX` is the usable handle.
 
+## The Solidity struct shape
+
+`InEuintXX` (and `InEbool`, `InEaddress`) is a four-field struct:
+
+```solidity
+struct InEuint64 {
+    uint256 ctHash;
+    uint8 securityZone;
+    uint8 utype;
+    bytes signature;
+}
+```
+
+viem serializes the SDK's encrypted output field-by-field, so the JS object `{ ctHash, securityZone, utype, signature }` maps directly onto the Solidity struct as a positional ABI argument. No reordering needed.
+
 ## The flow
 
 ```
@@ -50,3 +65,4 @@ On-chain (your contract):
 - **Re-verifying an `InEuintXX` in the same tx is idempotent** — returns the same handle. Across transactions, the signature is single-use; re-submitting the same struct in a later tx will revert on signature replay.
 - **`utype` must match the function signature exactly.** Passing an `InEuint128` to a function expecting `InEuint64` reverts on the signature check.
 - **Security zones can expire.** If the user's SDK fetched keys from an old zone, `asEuintXX` reverts. Have them refresh the client.
+- **A returned handle of zero means "never written," not "encrypted zero."** When you read an encrypted balance / value from another contract (e.g. `FHERC20.confidentialBalanceOf(addr)` returns `euint64.unwrap(handle) == 0`), the slot has never been initialized. Don't pass a zero handle to the decrypt SDK — skip it client-side. See also Rule 8 in `references/hard-rules.md` (uninitialized state acts as zero).

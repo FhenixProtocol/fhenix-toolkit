@@ -95,6 +95,18 @@ https://raw.githubusercontent.com/FhenixProtocol/poc-shielded-stablecoin/master/
 https://raw.githubusercontent.com/FhenixProtocol/miniapp-equle/main/packages/cofhe-nextjs/src/app/hooks/useCofhe.ts
 ```
 
+## Deprecated symbols — if you find them, the doc is stale
+
+These appear in older blog posts, docs, and templates but are **deprecated** or **removed** in the current `@cofhe/sdk`. If a recipe surfaces them, treat the source as outdated:
+
+- **`decryptHandle(handle, type, ...)`** — kept as a thin alias for back-compat. Prefer `decryptForView(handle, type).withPermit().execute()` (or `decryptForTx(...)` if you need on-chain verify).
+- **`.encrypt()` / `.decrypt()`** as builder terminators — replaced by `.execute()`. Every builder (`encryptInputs`, `decryptForView`, `decryptForTx`) finalizes on `.execute()`.
+- **`Result<T>` tuple return pattern** (`{ success, data, error }`) from legacy `cofhejs` — gone. Methods either return values directly or throw `CofheError`. See `concepts/error-handling.md`.
+- **`cofhejs.initialize(...)` auto-permit** — no longer auto-creates. Call `client.permits.getOrCreateSelfPermit(...)` explicitly. See `concepts/permits.md`.
+- **`FHE.decrypt(ct)` / `FHE.getDecryptResultSafe(ct)`** (Solidity side) — the legacy on-chain poll loop is gone. Current flow: off-chain `decryptForTx().execute()` + on-chain `FHE.verifyDecryptResult(...)`. See the fhenix-contracts skill.
+
+If you see any of these in a fetched doc or example, switch to the current pattern.
+
 ## Docs
 
 - https://cofhe-docs.fhenix.zone/client-sdk/ (conceptual)

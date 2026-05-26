@@ -71,3 +71,48 @@ Don't destructure `signature` from a `decryptForView` result — it doesn't exis
 ## Rule 10: Errors are typed, not Result-wrapped
 
 `@cofhe/sdk` throws `CofheError` (typed). Catch with `try`/`catch`, not the legacy `Result<T>` tuple pattern. Discriminate via `error.code`. See `concepts/error-handling.md`.
+
+## Rule 11: `issuer` must equal the connected signer
+
+A CoFHE permit is EIP-712. The backend recovers the signer from the signature and compares it against the declared `issuer`. Hardcoding `issuer` is the single most common cause of "Invalid issuer signature." Always derive from the client:
+
+```
+const issuer = cofheClient.getSnapshot().account;
+```
+
+Smart accounts in EIP-1271 mode: the wallet client's `account.address` is the SA, not the underlying EOA. As long as `issuer` comes from `getSnapshot()`, you get the right address automatically. See `concepts/permit-issuer-gotcha.md`.
+
+## Rule 12: `createCofheConfig` is browser-only — lazy-init it
+
+`createCofheConfig({...})` touches browser-only APIs (iframe storage, `crypto.subtle`). Calling it at module top-level crashes SSR. Wrap in a lazy getter:
+
+```
+let cofheConfig: ReturnType<typeof createCofheConfig> | null = null;
+function getCofheConfig() {
+  if (!cofheConfig) {
+    cofheConfig = createCofheConfig({ supportedChains: [...] });
+  }
+  return cofheConfig;
+}
+```
+
+Pair with the Proxy singleton for the client itself — see `concepts/init-singleton.md`.
+
+## Rule 13: Don't alias `web → node`
+
+`@cofhe/sdk/node` is a strict subset of `@cofhe/sdk/web`. Anything importing `Encryptable`, `areWorkersAvailable`, `createSsrStorage`, or `createCofheClientWithCustomWorker` breaks under the alias. Import each subpath where appropriate — never collapse the two. See `concepts/entry-points-web-vs-node.md`.
+
+## Rule 14: Declare `@cofhe/abi` explicitly; pin it with `@cofhe/sdk`
+
+`@cofhe/sdk` imports from `@cofhe/abi` but does NOT declare it as a runtime dep. Add it to your `package.json` explicitly, and pin both packages to the same version (typically via a `pnpm-workspace.yaml` override) so transitive installs can't pull a different one:
+
+```
+# pnpm-workspace.yaml
+overrides:
+  '@cofhe/sdk': <version>
+  '@cofhe/abi': <version>
+```
+
+## Rule 15: Don't externalize `@cofhe/sdk` server-side
+
+In Next.js, `serverExternalPackages: ['@cofhe/sdk']` tells Node's `require` to handle it — but the CJS build drags in ESM-only `tfhe` and crashes the server. Use `transpilePackages: ['@cofhe/sdk']` instead. See `concepts/bundler-config.md`.

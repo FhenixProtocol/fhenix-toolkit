@@ -44,6 +44,21 @@ All three share the same underlying FHE patterns:
 
 The differences are mostly in transfer semantics (callbacks, hooks) and which "standard" you reference at the interface level.
 
+## FHERC20 vs ERC-20 — API mapping
+
+If you know ERC-20, this is the rename sheet. The semantics differ in one important way: `confidentialBalanceOf` returns a **handle** (a `uint256` reference into the on-chain ACL), not an amount. To get the cleartext amount you decrypt the handle off-chain.
+
+| ERC-20 | FHERC20 / ERC20Confidential |
+|---|---|
+| `balanceOf(address) → uint256` | `confidentialBalanceOf(address) → uint256` (handle, not amount) |
+| `transfer(to, amount)` | `confidentialTransfer(to, euint64)` |
+| `transferFrom(from, to, amount)` | `confidentialTransferFrom(from, to, euint64)` |
+| `approve(spender, amount)` | `setOperator(operator, uint64 untilTimestamp)` — time-bounded, binary |
+| `allowance(owner, spender) → uint256` | `isOperator(holder, spender) → bool` |
+| `event Transfer(from, to, amount)` | Emits with the *handle*, not the amount (or omits the amount field entirely) — see `references/hard-rules.md` Rule 7 on ACL-before-emit ordering |
+
+See `concepts/operator-pattern.md` for the operator semantics in detail, and `concepts/handle-lifecycle-backfill.md` Pattern 3 for working with FHERC20 balances from contracts that hold tokens on someone's behalf.
+
 ## Gotchas
 
 - **Don't mix standards in one ecosystem.** A wrapper from FHERC20-land won't accept tokens from ERC20Confidential and vice versa — different interfaces, different operator conventions.
