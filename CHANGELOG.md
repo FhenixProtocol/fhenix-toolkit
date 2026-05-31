@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-31
+
+Minor release — substantial new concept coverage across `fhenix-contracts` and `fhenix-sdk`, plus new hard rules and lookup recipes.
+
+### Added
+
+#### `fhenix-contracts`
+
+- **`allow-transient`** concept — `FHE.allowTransient(ct, addr)` for single-transaction ACL grants that never write storage, and when to reach for it over the persistent `FHE.allow`.
+- **`handle-lifecycle-backfill`** concept — re-granting handles at scale; the per-op rule from `allow-cascade` applied to loops, batch updates, and migrations.
+- New hard rules and expanded guidance in `confidential-token-standards` and `encrypted-input`.
+
+#### `fhenix-sdk`
+
+- **`bundler-config`** concept — Next.js and Vite recipes for loading the TFHE WASM module, CJS-only transitive deps, and top-level-await init (fixes blank-page / missing-export / SSR-crash failure modes).
+- **`debugging-decryption`** concept — the three buckets a failing `decryptForView` / `decryptForTx` falls into, and how to triage each.
+- **`entry-points-web-vs-node`** concept — `@cofhe/sdk/web` vs `/node` are not interchangeable; which to import where.
+- **`permit-dedup`** concept — the concurrent `getOrCreateSelfPermit` race that fires two wallet popups, and how to serialize it.
+- **`permit-issuer-gotcha`** concept — the EIP-712 `issuer`/signer mismatch behind "Invalid issuer signature".
+- **`sharing-permits`** concept — selective off-chain disclosure: authorizing a recipient to decrypt specific handles without granting on-chain ACL access.
+- New hard rules and new lookup recipes covering the above.
+
+### Changed
+
+- `README.md` — added Claude Code Desktop install instructions alongside the terminal flow.
+
 ## [0.1.1] — 2026-05-25
 
 Patch release — install-command correction.
@@ -67,5 +93,6 @@ First public release. The four v1 skills, the audit subagent, the CI, the docs, 
 - **`fhenix-migrate`** (legacy `cofhejs` → `@cofhe/sdk`) is deferred to v1.5. Spec retained at `docs/SPEC.md` §5.3.
 - **`on-cofhe-release.yml`** (auto-PR on upstream majors) deferred to v1.0; manual bump flow documented in `docs/release-process.md`.
 
+[0.2.0]: https://github.com/FhenixProtocol/fhenix-toolkit/releases/tag/v0.2.0
 [0.1.1]: https://github.com/FhenixProtocol/fhenix-toolkit/releases/tag/v0.1.1
 [0.1.0]: https://github.com/FhenixProtocol/fhenix-toolkit/releases/tag/v0.1.0
