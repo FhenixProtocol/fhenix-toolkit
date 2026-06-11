@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Installs now pin to a release tag instead of floating on `main`'s HEAD.** Added `source.ref: "v0.2.0"` to the `git-subdir` source in `marketplace.json`, so `/plugin install fhenix-toolkit` resolves to the exact tagged commit rather than whatever happens to be on `main`. Closes the "default install floats on default-branch HEAD" known flaw. Going forward, each release bumps `ref` alongside the version fields (see [`docs/release-process.md`](docs/release-process.md)).
+- **Plugin install no longer requires GitHub SSH keys.** The `git-subdir` source used the `FhenixProtocol/fhenix-toolkit` shorthand, which Claude Code resolves to an SSH clone (`git@github.com:...`), so `/plugin install fhenix-toolkit` failed with `Permission denied (publickey)` for anyone without SSH auth configured. The source now uses the full HTTPS URL.
+
 ## [0.2.0] — 2026-05-31
 
 Minor release — substantial new concept coverage across `fhenix-contracts` and `fhenix-sdk`, plus new hard rules and lookup recipes.

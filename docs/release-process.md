@@ -17,8 +17,9 @@ CoFHE upstream version bumps (`@cofhe/sdk`, `cofhe-contracts`) are handled separ
 ## The release cut
 
 1. **Pick a version.** Look at what's landed in `## [Unreleased]` of `CHANGELOG.md` since the last tag. Match it against the table above.
-2. **Update version in three places** — they have to stay in sync:
+2. **Update version in four places** — they have to stay in sync:
    - `.claude-plugin/marketplace.json` → `metadata.version` AND `plugins[0].version`
+   - `.claude-plugin/marketplace.json` → `plugins[0].source.ref` (the tag the install actually resolves to: bump this to `vX.Y.Z`)
    - `plugins/fhenix-toolkit/.claude-plugin/plugin.json` → `version`
    - `CHANGELOG.md` → rename `## [Unreleased]` to `## [X.Y.Z] — YYYY-MM-DD` and add a fresh `## [Unreleased]` block above
 3. **Open a release PR** titled `[RELEASE] vX.Y.Z`. The PR body summarizes the user-visible changes (copied / refined from the CHANGELOG entry).
@@ -28,6 +29,9 @@ CoFHE upstream version bumps (`@cofhe/sdk`, `cofhe-contracts`) are handled separ
    git tag -a vX.Y.Z -m "vX.Y.Z — <short summary>"
    git push origin vX.Y.Z
    ```
+   > The `source.ref` you set in step 2 points at this tag, so until it's pushed the ref is dangling and a fresh `/plugin install` won't resolve. Tag right after merging, and don't leave `main` un-tagged once the bumped `ref` has landed.
+   >
+   > Existing installs pick the new tag up with `/plugin marketplace update` followed by `/plugin update fhenix-toolkit`, no remove + re-add needed. Update detection keys off the plugin `version`, not the `ref`, which is why step 2 bumps both together: a `ref` bump with an unchanged version is silently skipped.
 6. **Create the GitHub release** (`gh release create vX.Y.Z --notes-file <release notes>`). Release notes are typically the CHANGELOG entry for that version, lightly polished.
 
 Users who installed with `@FhenixProtocol` pin to the latest published release once a tag exists.
