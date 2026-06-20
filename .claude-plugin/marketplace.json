@@ -16,8 +16,10 @@
       "name": "fhenix-toolkit",
       "source": {
         "source": "git-subdir",
-        "url": "FhenixProtocol/fhenix-toolkit",
-        "path": "plugins/fhenix-toolkit"
+        "url": "https://github.com/FhenixProtocol/fhenix-toolkit.git",
+        "path": "plugins/fhenix-toolkit",
+        "ref": "v0.2.0",
+        "sha": "f6f2e511bb4194c393c4f32829b5b0172eb01782"
       },
       "description": "Write, test, and audit confidential Solidity and TypeScript on Fhenix CoFHE. Ships fhenix-contracts, fhenix-sdk (pending), fhenix-review, fhenix-tests skills plus the fhe-reviewer audit subagent.",
       "version": "0.2.0",
