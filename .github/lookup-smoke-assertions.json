@@ -1,0 +1,78 @@
+{
+  "_comment": "Content assertions for the lookup-recipe-smoke workflow. The URL-liveness pass confirms each lookup-recipe target still resolves (200); these assertions confirm the fetched file still contains the symbols the skills actually depend on. A renamed or removed upstream symbol would pass a 200-only check but break the recipe semantically - this catches that. Matching is fixed-string (grep -F), case-sensitive. Add an entry (or a symbol) whenever a recipe or concept starts leaning on a new upstream symbol; drop one when a recipe stops referencing it.",
+  "assertions": [
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/FHE.sol",
+      "skills": ["fhenix-contracts", "fhenix-review"],
+      "must_contain": [
+        "function allowThis",
+        "function allowTransient",
+        "function allowPublic",
+        "function allow(",
+        "function select",
+        "function verifyDecryptResult",
+        "function asEuint8"
+      ],
+      "must_not_contain": [
+        "function decrypt("
+      ],
+      "why": "The contracts/review skills teach the four-verb ACL taxonomy (allow / allowThis / allowTransient / allowPublic), the branchless FHE.select pattern, the on-chain verifyDecryptResult decrypt flow, and narrowing casts (asEuint8). FHE.decrypt is the removed legacy synchronous initiator - if it reappears, the deprecated-symbols guidance needs review."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/core/error.ts",
+      "skills": ["fhenix-sdk", "fhenix-review"],
+      "must_contain": [
+        "CofheErrorCode",
+        "class CofheError"
+      ],
+      "why": "The SDK error-handling concept enumerates err.code off the CofheErrorCode union and catches CofheError; both are the anchors the recipe greps for."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/core/index.ts",
+      "skills": ["fhenix-sdk"],
+      "must_contain": [
+        "createCofheClient",
+        "createCofheConfig",
+        "Encryptable",
+        "FheTypes"
+      ],
+      "why": "The SDK init recipe and encrypted-input cast lean on these top-level exports."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/permits/index.ts",
+      "skills": ["fhenix-sdk"],
+      "must_contain": [
+        "PermitUtils",
+        "SealingKey"
+      ],
+      "why": "The permit-lifecycle and sharing-permit concepts reference the permit utilities and the sealing-key surface exported here."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhe-mock-contracts/master/contracts/CoFheTest.sol",
+      "skills": ["fhenix-tests"],
+      "must_contain": [
+        "createInEuint",
+        "assertHashValue",
+        "etchFhenixMocks",
+        "mockStorage"
+      ],
+      "why": "The fhenix-tests recipe tells Claude to look for exactly these helpers on the CoFheTest base your test inherits."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/host-chain/contracts/ACL.sol",
+      "skills": ["fhenix-contracts", "fhenix-review"],
+      "must_contain": [
+        "contract ACL"
+      ],
+      "why": "ACL runtime semantics back the user-facing FHE.allow* wrappers; the recipe resolves this file by name (path has moved before), so confirm the contract still lives here."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/internal/host-chain/contracts/TaskManager.sol",
+      "skills": ["fhenix-contracts", "fhenix-review"],
+      "must_contain": [
+        "contract TaskManager"
+      ],
+      "why": "TaskManager holds the runtime ACL / handle-lifecycle logic the recipe points at; same name-resolution caveat as ACL.sol."
+    }
+  ]
+}
