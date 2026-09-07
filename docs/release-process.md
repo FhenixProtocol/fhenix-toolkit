@@ -17,8 +17,9 @@ CoFHE upstream version bumps (`@cofhe/sdk`, `cofhe-contracts`) are handled separ
 ## The release cut
 
 1. **Pick a version.** Look at what's landed in `## [Unreleased]` of `CHANGELOG.md` since the last tag. Match it against the table above.
-2. **Update version in three places** — they have to stay in sync:
+2. **Update version in four places** — they have to stay in sync:
    - `.claude-plugin/marketplace.json` → `metadata.version` AND `plugins[0].version`
+   - `.claude-plugin/marketplace.json` → `plugins[0].source.ref` (`vX.Y.Z`) **and** `plugins[0].source.sha` (peeled commit for that tag). Pinning `sha` keeps installs stable even if a tag is force-moved.
    - `plugins/fhenix-toolkit/.claude-plugin/plugin.json` → `version`
    - `CHANGELOG.md` → rename `## [Unreleased]` to `## [X.Y.Z] — YYYY-MM-DD` and add a fresh `## [Unreleased]` block above
 3. **Open a release PR** titled `[RELEASE] vX.Y.Z`. The PR body summarizes the user-visible changes (copied / refined from the CHANGELOG entry).
