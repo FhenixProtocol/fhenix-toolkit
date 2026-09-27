@@ -27,6 +27,7 @@ The plugin curates **timeless wisdom** (concepts, decision trees, gotchas) and t
 - Lookup-recipe-driven references (concept files + live-lookup instructions, no embedded code listings).
 - CI: link-check, lookup-recipe-smoke.
 - Drift coordination: cross-repo `repository_dispatch` handshake from `cofhesdk` and `cofhe-contracts` on major releases (added to those repos separately).
+- Multi-tool distribution beyond Claude Code: Cursor rules (`.cursor/rules/`), root `AGENTS.md` for Codex/other agents, and README install notes per tool (#5).
 
 ### Deferred (v1.5+)
 
@@ -34,7 +35,6 @@ The plugin curates **timeless wisdom** (concepts, decision trees, gotchas) and t
 - Slash commands: `/fhenix:scaffold-dapp`, `/fhenix:scaffold-contract`.
 - Auto-generated FHE.sol reference (parse source, emit markdown) — hand-curated lookup recipes are sufficient for v1.
 - Localizations (English only at v1).
-- Cursor / VS Code ports.
 
 ### Out of scope
 

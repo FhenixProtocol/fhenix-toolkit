@@ -24,6 +24,14 @@
 /plugin install fhenix-toolkit
 ```
 
+## Cursor / other agents
+
+The same curated skills ship as plain markdown under `plugins/fhenix-toolkit/skills/`.
+
+**Cursor:** clone this repo (or add it to your workspace). Project rules in `.cursor/rules/` activate on Solidity / TypeScript globs; for full recipes, `@`-mention the matching `SKILL.md`. Root `AGENTS.md` summarizes the skill map.
+
+**Codex CLI / Copilot Chat / other agents:** point the agent at `AGENTS.md` and the `skills/` tree — no Claude Code plugin host required.
+
 ## Claude Code Desktop Installation
 
 1. Add the marketplace 

@@ -1,0 +1,17 @@
+---
+description: CoFHE SDK init, encrypt, decrypt, and permit rules for TypeScript
+globs:
+  - "**/*.{ts,tsx,js,jsx}"
+alwaysApply: false
+---
+
+# Fhenix SDK (Cursor)
+
+When code imports `@cofhe/sdk` (or legacy `cofhejs`):
+
+1. Use the canonical init path (`createCofheConfig` → `createCofheClient` → `connect`).
+2. Choose decrypt flow deliberately: `decryptForView` vs `decryptForTx().withPermit()` vs `.withoutPermit()` (the last requires on-chain `FHE.allowPublic` / allowGlobal).
+3. Timestamps for permits/deadlines are **Unix seconds**, not milliseconds.
+4. Prefer live lookup of current SDK signatures from public Fhenix repos rather than inventing APIs.
+
+See `plugins/fhenix-toolkit/skills/fhenix-sdk/SKILL.md` and `fhenix-review` for the gotcha catalog.

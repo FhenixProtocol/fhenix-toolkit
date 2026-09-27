@@ -1,0 +1,20 @@
+---
+description: Hard rules for CoFHE / Fhenix confidential Solidity contracts
+globs:
+  - "**/*.sol"
+alwaysApply: false
+---
+
+# Fhenix contracts (Cursor)
+
+When editing Solidity that imports `@fhenixprotocol/cofhe-contracts/FHE.sol` or uses `euint*` / `ebool` / `eaddress`:
+
+1. Never branch on encrypted values with `if` / `require` / `assert` on `ebool` — use `FHE.select`.
+2. After every encrypted storage write, call the ACL cascade (`FHE.allowThis`, then `FHE.allowSender` / `FHE.allow` as needed).
+3. Prefer bit-shifts over encrypted `mul` / `div` when a power-of-two ratio works.
+4. Treat trivial encrypts and event emissions of ciphertexts as plaintext leakage risks.
+
+For full decision trees and lookup recipes, read:
+
+- `plugins/fhenix-toolkit/skills/fhenix-contracts/SKILL.md`
+- `plugins/fhenix-toolkit/skills/fhenix-contracts/references/`
