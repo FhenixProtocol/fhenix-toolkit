@@ -50,9 +50,11 @@ A future enhancement: smoke checks should `grep` for the target symbol in the fe
 
 `.github/CODEOWNERS` routes everything to `@fhenixprotocol/protocol-team` + `@toml01`. Per-area routing (contracts team for `/plugins/fhenix-toolkit/skills/fhenix-contracts/`, SDK team for `/plugins/fhenix-toolkit/skills/fhenix-sdk/`, etc.) was intentionally deferred — we wanted to mirror the simple cofhe pattern first. Revisit when the maintainer count grows.
 
-### Default install floats on default-branch HEAD
+### Default install previously floated on default-branch HEAD
 
-`v0.1.0` is tagged and a GitHub release exists, but the default install command (`/plugin install fhenix-toolkit`) still resolves to whatever's on `main` right now, not the tagged release. Users who want reproducibility have to pin explicitly (`/plugin install fhenix-toolkit@v0.1.0`, syntax TBC). Until we publish a clear "how to pin" recipe in the README, expect installs to drift quietly as `main` advances between releases.
+**Status: closed for the marketplace default.** `.claude-plugin/marketplace.json` now pins the `git-subdir` source with both `ref: "v0.2.0"` and the peeled commit `sha`, so `/plugin install fhenix-toolkit` resolves to the tagged release commit instead of floating on `main`.
+
+Still true: if you install by cloning this repo or pointing Claude at a local checkout of `main`, you get HEAD — only the marketplace install path is pinned. Each release cut must bump `ref` / `sha` alongside the version fields (see [`release-process.md`](release-process.md)).
 
 ## Inherent limitations (not gaps — by design)
 
