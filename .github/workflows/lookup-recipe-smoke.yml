@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'plugins/**/references/lookup-recipes.md'
+      - '.github/lookup-smoke-assertions.json'
       - '.github/workflows/lookup-recipe-smoke.yml'
 
 jobs:
@@ -62,5 +63,53 @@ jobs:
           done
           if [ "$FAIL" -ne 0 ]; then
             echo "One or more lookup-recipe URLs failed; review the failures above."
+            exit 1
+          fi
+
+      - name: Lookup-recipe content assertions (symbol presence, not just URL 200)
+        shell: bash
+        run: |
+          set -u
+          MANIFEST=.github/lookup-smoke-assertions.json
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::error::$MANIFEST not found"; exit 1
+          fi
+          if ! jq empty "$MANIFEST" 2>/dev/null; then
+            echo "::error::$MANIFEST is not valid JSON"; exit 1
+          fi
+          FAIL=0
+          tmp="$(mktemp)"
+          while IFS= read -r entry; do
+            url="$(jq -r '.url' <<<"$entry")"
+            echo "::group::$url"
+            if ! curl -fsSL --max-time 25 -o "$tmp" "$url"; then
+              echo "::error::fetch failed: $url"
+              FAIL=1
+              echo "::endgroup::"
+              continue
+            fi
+            while IFS= read -r sym; do
+              [ -z "$sym" ] && continue
+              if grep -Fq -- "$sym" "$tmp"; then
+                echo "ok      contains: $sym"
+              else
+                echo "::error::expected symbol missing from $url -> '$sym' (a rename/removal upstream; update the recipe and this assertion together)"
+                FAIL=1
+              fi
+            done < <(jq -r '.must_contain[]? // empty' <<<"$entry")
+            while IFS= read -r sym; do
+              [ -z "$sym" ] && continue
+              if grep -Fq -- "$sym" "$tmp"; then
+                echo "::error::symbol expected ABSENT but present in $url -> '$sym' (deprecated-symbol guidance may be stale)"
+                FAIL=1
+              else
+                echo "ok      absent:   $sym"
+              fi
+            done < <(jq -r '.must_not_contain[]? // empty' <<<"$entry")
+            echo "::endgroup::"
+          done < <(jq -c '.assertions[]' "$MANIFEST")
+          rm -f "$tmp"
+          if [ "$FAIL" -ne 0 ]; then
+            echo "One or more content assertions failed; a recipe symbol was renamed, removed, or unexpectedly reintroduced upstream."
             exit 1
           fi

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Content assertions in `lookup-recipe-smoke`** — the smoke workflow now verifies that load-bearing recipe URLs still contain the symbols the skills depend on, not just that they return 200. Driven by `.github/lookup-smoke-assertions.json` (per-URL `must_contain` / `must_not_contain`, fixed-string match). An upstream rename now fails the smoke run with the symbol named, instead of silently passing. Resolves the "smoke covers URLs, not content" gap in `docs/known-flaws.md`.
+
 ## [0.2.0] — 2026-05-31
 
 Minor release — substantial new concept coverage across `fhenix-contracts` and `fhenix-sdk`, plus new hard rules and lookup recipes.

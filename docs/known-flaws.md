@@ -40,11 +40,9 @@ The goal of this file is to be honest about the gaps so users can compensate and
 
 Not built. SPEC §9 and `docs/ci.md` describe the intent: `cofhesdk` / `cofhe-contracts` fire `repository_dispatch` on major releases, and this workflow opens an auto-PR bumping `compatibility.json`. Until it exists, drift detection is manual — someone has to notice the major release and open the PR by hand. See [`docs/release-process.md`](release-process.md) for the current manual flow.
 
-### Lookup-recipe smoke covers URLs, not content
+### Lookup-recipe smoke covers URLs, not content — resolved
 
-`lookup-recipe-smoke.yml` verifies every URL still 200s. It doesn't verify that the *content* at the URL is what the recipe expects (e.g., that `FHE.sol` still contains the function the recipe greps for). A renamed function would pass the smoke check but break the recipe semantically.
-
-A future enhancement: smoke checks should `grep` for the target symbol in the fetched file, not just confirm the URL resolves.
+`lookup-recipe-smoke.yml` originally only verified that every URL still 200s, so a renamed or removed upstream symbol would pass the check but break the recipe semantically. Resolved by adding a content-assertion pass driven by [`.github/lookup-smoke-assertions.json`](../.github/lookup-smoke-assertions.json): each load-bearing URL declares the symbols that must (and, for deprecated APIs, must not) appear in the fetched file, and the workflow fixed-string-greps the content. A rename now fails the smoke run with the offending symbol named. Extend the manifest whenever a recipe starts leaning on a new upstream symbol.
 
 ### CODEOWNERS is minimal
 
