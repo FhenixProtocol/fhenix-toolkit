@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
 
       - name: Verify raw access to cofhe-contracts FHE.sol
         run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/FhenixProtocol/cofhe-contracts/main/contracts/FHE.sol
@@ -23,7 +23,13 @@ jobs:
       - name: Verify GitHub API access to cofhesdk source tree
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: curl -fsSL -o /dev/null -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/FhenixProtocol/cofhesdk/contents/packages/sdk/core"
+        # Block scalar: a plain scalar cannot contain ": " (the Accept header
+        # below), which made this workflow invalid YAML and therefore unschedulable.
+        run: >-
+          curl -fsSL -o /dev/null
+          -H "Accept: application/vnd.github+json"
+          -H "Authorization: Bearer $GH_TOKEN"
+          "https://api.github.com/repos/FhenixProtocol/cofhesdk/contents/packages/sdk/core"
 
       - name: Verify raw access to cofhesdk error.ts
         run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/FhenixProtocol/cofhesdk/master/packages/sdk/core/error.ts
