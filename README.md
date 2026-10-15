@@ -71,6 +71,14 @@ Plus the **`fhe-reviewer` subagent** — deep-audit companion to `fhenix-review`
 
 `fhenix-migrate` (legacy `cofhejs` → `@cofhe/sdk`) is deferred to v1.5 — design intact, ship timing TBD.
 
+### Bankr skill: private payments in chat
+
+[`bankr/fhenix-private`](bankr/) is a separate skill for the [Bankr](https://bankr.bot) agent, not for Claude Code. It lets Bankr users shield, privately send, unshield and view Fhenix confidential tokens (fUSDC, fUSDT, fBTC, …) on Arbitrum One and Ethereum, including from X posts without revealing amounts. Install it in Bankr with:
+
+```
+install the skill at https://github.com/FhenixProtocol/fhenix-toolkit/tree/main/bankr/fhenix-private
+```
+
 ---
 
 ## Design philosophy
@@ -108,7 +116,7 @@ PR-review routing is in [`.github/CODEOWNERS`](.github/CODEOWNERS). The release 
 
 ## CI
 
-Two GitHub Actions workflows — `link-check` and `lookup-recipe-smoke` — run on push, PR, and daily cron. See [`docs/ci.md`](docs/ci.md) for details.
+Two GitHub Actions workflows — `link-check` and `lookup-recipe-smoke` — run on push, PR, and daily cron. See [`docs/ci.md`](docs/ci.md) for details. A third, `bankr-skills`, runs the Bankr skill's tests and re-checks its pinned token addresses against mainnet.
 
 ## License
 

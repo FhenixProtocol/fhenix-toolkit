@@ -49,6 +49,10 @@ This plugin **does not snapshot API surfaces.** When you need to know whether a 
 
 Do not generate FHE.sol or `@cofhe/sdk` API calls from training-data memory. Fhenix repos move fast — what you remember may be stale.
 
+## Bankr skills (`bankr/`)
+
+`bankr/` holds skills for the Bankr agent, not for Claude Code. They are runtime artifacts Bankr executes, so the exception to the lookup-driven philosophy applies there: `bankr/fhenix-private/scripts/fhenix.mjs` **pins** token addresses and ABI on purpose as its trust anchor. When editing it, verify every address or selector on-chain (`cd bankr && bun test/verify-tokens.mjs`, `bun test/simulate-send.mjs`) and run `bun test test/`. Never move a Bankr skill under `plugins/`.
+
 ## See also
 
 - [`README.md`](README.md) — install, overview, design philosophy

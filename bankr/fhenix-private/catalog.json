@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "slug": "fhenix-private",
+  "provider": "Fhenix",
+  "providerUrl": "https://www.fhenix.io",
+  "logo": null,
+  "demo": {
+    "title": "private-payments.txt",
+    "language": "text",
+    "code": "You:   shield 100 USDC into private fUSDC\nBankr: Shielded. Your fUSDC balance is encrypted on-chain. Tx: arbiscan.io/tx/0x…\n\nYou:   save coffee as 5 fUSDC\nBankr: Saved. Say \"send @someone a coffee\" anywhere.\n\nOn X:  @bankrbot send @bob a coffee in private fUSDC\nBankr: Sent privately ✓ arbiscan.io/tx/0x…\n\nYou:   what's my private fUSDC balance?\nBankr: 95 fUSDC (only you can see this)"
+  },
+  "setup": [
+    "Turn on Enable arbitrary contract calls in bankr.bot → Security.",
+    "Hold a little ETH on Arbitrum One for gas; private-token transactions are not gas-sponsored.",
+    "Optional, for private balances: create a Bankr API key with Wallet API on, not read-only and no recipient allowlist, and save it as the FHENIX_BANKR_API_KEY secret.",
+    "Set saved amounts in the terminal or Telegram, never in a public post."
+  ],
+  "install": {
+    "type": "bankr",
+    "repoPath": "fhenix-private",
+    "command": "install the skill at https://github.com/FhenixProtocol/fhenix-toolkit/tree/main/bankr/fhenix-private"
+  }
+}

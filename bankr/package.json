@@ -1,0 +1,14 @@
+{
+  "name": "fhenix-bankr-skills-dev",
+  "private": true,
+  "type": "module",
+  "description": "Local test harness for the Bankr skills in this folder. Not shipped to Bankr; the skill pins its own packages in execute_cli.",
+  "scripts": {
+    "test": "bun test test/",
+    "verify-tokens": "bun test/verify-tokens.mjs"
+  },
+  "dependencies": {
+    "@cofhe/sdk": "0.8.0",
+    "viem": "2.38.6"
+  }
+}

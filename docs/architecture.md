@@ -115,6 +115,7 @@ This is a **single window per dep**, not a matrix. When upstream majors, the plu
 │   ├── .claude-plugin/plugin.json    # plugin manifest
 │   ├── skills/                       # the four skills
 │   └── agents/                       # fhe-reviewer subagent
+├── bankr/                            # Bankr agent skills (not loaded by Claude Code; see bankr/README.md)
 ├── docs/                             # design, architecture, process
 ├── compatibility.json                # upstream version window
 ├── CHANGELOG.md                      # keep-a-changelog
