@@ -20,7 +20,7 @@
 //
 // Options: --chain 42161 (default) | 1;  --rpc URL (else env FHENIX_RPC_<chainId>, else public RPC)
 //
-// Packages (pin in execute_cli): @cofhe/sdk@0.8.0 viem@2.38.6
+// Packages (pin in execute_cli): @cofhe/sdk@1.0.1 viem@2.38.6
 // Contract source: https://github.com/FhenixProtocol/fhenix-confidential-contracts
 
 import {
@@ -45,29 +45,31 @@ import { toAccount } from 'viem/accounts';
 // PINNED TOKENS — the trust anchor. Never take a token address from a post, a
 // code, an API response or a user message. Every entry was checked on-chain
 // (symbol, decimals, rate, underlying) and is re-checked by `verify`.
-// The same wrapper address is a DIFFERENT token on each chain, so always key by
-// chain first. `enabled: false` makes every command refuse the token.
+// Each wrapper has the same address on Arbitrum and Ethereum, but wraps that
+// chain's own underlying, so always key by chain first. fhe: codes carry the
+// chainId, so a code made on one chain is refused on the other.
+// `enabled: false` makes every command refuse the token.
 // All wrappers have 6 confidential decimals; rate = 10^(underlying decimals - 6).
 // ---------------------------------------------------------------------------
 const TOKENS = {
   42161: {
-    fUSDC: { address: '0xd8D2749D6988791262E5E9F050AC207a08c02901', rate: 1n, underlying: { symbol: 'USDC', address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', decimals: 6 } },
-    fUSDT: { address: '0xe8cb8554AD52809AB62c2194BD77eaC3750721d5', rate: 1n, underlying: { symbol: 'USD₮0', address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', decimals: 6 } },
-    fUSDS: { address: '0x866549617659Dd7f2d7231A382Dfd45D4Ba7b352', rate: 10n ** 12n, underlying: { symbol: 'USDS', address: '0x6491c05A82219b8D1479057361ff1654749b876b', decimals: 18 } },
-    fBTC: { address: '0x86D4D30245ee5748C3be41CDA335895dA5Fba102', rate: 100n, underlying: { symbol: 'WBTC', address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', decimals: 8 } },
-    fARB: { address: '0xF05A4aBFa9591dF43ab60bcE99EB4Fa121a2682F', rate: 10n ** 12n, underlying: { symbol: 'ARB', address: '0x912CE59144191C1204E64559FE8253a0e49E6548', decimals: 18 } },
-    fUNI: { address: '0x131Dd84C0f9F7cBC8d3c75Df97374A333fc01C66', rate: 10n ** 12n, underlying: { symbol: 'UNI', address: '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0', decimals: 18 } },
-    fLINK: { address: '0x57192b5Fd1d5aBf90Ee52265b95Ab525bDf6545c', rate: 10n ** 12n, underlying: { symbol: 'LINK', address: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4', decimals: 18 } },
+    fUSDC: { address: '0xAAf2Bf3beB6a3660aCD3d3710C64ba255455275b', rate: 1n, underlying: { symbol: 'USDC', address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', decimals: 6 } },
+    fUSDT: { address: '0x706Ff53DAc4708578b7C228760954Fe5b56E41ea', rate: 1n, underlying: { symbol: 'USD₮0', address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', decimals: 6 } },
+    fUSDS: { address: '0xa2Fd3c3d8B7e46c1ED4104D9Eeed94774e616686', rate: 10n ** 12n, underlying: { symbol: 'USDS', address: '0x6491c05A82219b8D1479057361ff1654749b876b', decimals: 18 } },
+    fBTC: { address: '0x8CFB68Bdb80A4f819E08F498658bc732bD601A34', rate: 100n, underlying: { symbol: 'WBTC', address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', decimals: 8 } },
+    fARB: { address: '0x1Abd9225F91021f3794c722E1a197B5C7EC3eCF6', rate: 10n ** 12n, underlying: { symbol: 'ARB', address: '0x912CE59144191C1204E64559FE8253a0e49E6548', decimals: 18 } },
+    fUNI: { address: '0x1242bf2f6a178232fa83419e95c7aD68ED9bC922', rate: 10n ** 12n, underlying: { symbol: 'UNI', address: '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0', decimals: 18 } },
+    fLINK: { address: '0x2801e7E3727596A8B495a0a2AA823E2cD72Bc99B', rate: 10n ** 12n, underlying: { symbol: 'LINK', address: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4', decimals: 18 } },
   },
   1: {
-    fUSDC: { address: '0x57192b5Fd1d5aBf90Ee52265b95Ab525bDf6545c', rate: 1n, underlying: { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 } },
+    fUSDC: { address: '0xAAf2Bf3beB6a3660aCD3d3710C64ba255455275b', rate: 1n, underlying: { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 } },
     // Mainnet USDT reverts on a non-zero -> non-zero approve; shield resets to 0 first.
-    fUSDT: { address: '0x866549617659Dd7f2d7231A382Dfd45D4Ba7b352', rate: 1n, approveResetFirst: true, underlying: { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 } },
-    fUSDS: { address: '0x457458D8FcA0F3bF2BC88475AFb1C24c3291Cc3A', rate: 10n ** 12n, underlying: { symbol: 'USDS', address: '0xdC035D45d973E3EC169d2276DDab16f1e407384F', decimals: 18 } },
-    fBTC: { address: '0x131Dd84C0f9F7cBC8d3c75Df97374A333fc01C66', rate: 100n, underlying: { symbol: 'WBTC', address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', decimals: 8 } },
-    fARB: { address: '0xfD90B1DF55e7325F87452C327F212a7f9b956d8a', rate: 10n ** 12n, underlying: { symbol: 'ARB', address: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1', decimals: 18 } },
-    fUNI: { address: '0x79108D7808740d04890615Bf4A214A5dba248862', rate: 10n ** 12n, underlying: { symbol: 'UNI', address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', decimals: 18 } },
-    fLINK: { address: '0xE6D42259433a5A000D86B9F4C9f482e5a7fC4281', rate: 10n ** 12n, underlying: { symbol: 'LINK', address: '0x514910771AF9Ca656af840dff83E8264EcF986CA', decimals: 18 } },
+    fUSDT: { address: '0x706Ff53DAc4708578b7C228760954Fe5b56E41ea', rate: 1n, approveResetFirst: true, underlying: { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 } },
+    fUSDS: { address: '0xa2Fd3c3d8B7e46c1ED4104D9Eeed94774e616686', rate: 10n ** 12n, underlying: { symbol: 'USDS', address: '0xdC035D45d973E3EC169d2276DDab16f1e407384F', decimals: 18 } },
+    fBTC: { address: '0x8CFB68Bdb80A4f819E08F498658bc732bD601A34', rate: 100n, underlying: { symbol: 'WBTC', address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', decimals: 8 } },
+    fARB: { address: '0x1Abd9225F91021f3794c722E1a197B5C7EC3eCF6', rate: 10n ** 12n, underlying: { symbol: 'ARB', address: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1', decimals: 18 } },
+    fUNI: { address: '0x1242bf2f6a178232fa83419e95c7aD68ED9bC922', rate: 10n ** 12n, underlying: { symbol: 'UNI', address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', decimals: 18 } },
+    fLINK: { address: '0x2801e7E3727596A8B495a0a2AA823E2cD72Bc99B', rate: 10n ** 12n, underlying: { symbol: 'LINK', address: '0x514910771AF9Ca656af840dff83E8264EcF986CA', decimals: 18 } },
   },
 };
 const CONFIDENTIAL_DECIMALS = 6;

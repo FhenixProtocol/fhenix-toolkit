@@ -14,6 +14,7 @@
 | `uint64` | Amount too large for a confidential balance | "That amount is too large for one private transfer." |
 | `FHENIX_BANKR_API_KEY` / `Bankr API key` | Balance viewing isn't set up | Explain the one-time setup below |
 | `different wallet` | The API key belongs to another Bankr wallet | "Your Bankr API key is for a different wallet." |
+| `ZK batch proof verification failed` / `ZK_VERIFY_FAILED` | The sandbox ran an old `@cofhe/sdk`; mainnet needs 1.0 or later | Re-run with exactly the `packages` pinned in SKILL.md. Tell the user "Private sends are briefly unavailable, try again shortly." |
 | `refused the ACP signature` | Bankr's `/wallet/sign` rejected the request | Check the key: Wallet API on, not read-only, no recipient allowlist |
 
 ## Submission refusals and reverts

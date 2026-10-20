@@ -8,7 +8,7 @@
     "verify-tokens": "bun test/verify-tokens.mjs"
   },
   "dependencies": {
-    "@cofhe/sdk": "0.8.0",
+    "@cofhe/sdk": "1.0.1",
     "viem": "2.38.6"
   }
 }

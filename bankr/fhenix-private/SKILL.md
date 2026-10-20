@@ -9,7 +9,7 @@ metadata:
     emoji: "🔐"
     homepage: "https://www.fhenix.io"
     requires:
-      packages: ["@cofhe/sdk@0.8.0", "viem@2.38.6"]
+      packages: ["@cofhe/sdk@1.0.1", "viem@2.38.6"]
 ---
 
 # Fhenix Private
@@ -31,7 +31,7 @@ The helper is installed with this skill at
 `/skills/fhenix-private/scripts/fhenix.mjs` in the user's files. Call
 `execute_cli` with:
 
-- `packages: ["@cofhe/sdk@0.8.0", "viem@2.38.6"]` (exact versions)
+- `packages: ["@cofhe/sdk@1.0.1", "viem@2.38.6"]` (exact versions)
 - `filesFromUserFs: ["/skills/fhenix-private/scripts/fhenix.mjs"]` to stage it
 - `timeoutMs: 120000`
 - `includeEnvVars: true` only for `balance` (it needs `FHENIX_BANKR_API_KEY`)

@@ -29,7 +29,7 @@ bankr/
 │   ├── fhenix.test.mjs        # offline unit tests (bun test)
 │   ├── verify-tokens.mjs      # re-checks every pinned token on mainnet
 │   └── simulate-send.mjs      # mainnet dry run of a private send (eth_call, nothing broadcast)
-└── package.json               # pins @cofhe/sdk@0.8.0 + viem@2.38.6, same as the skill
+└── package.json               # pins @cofhe/sdk@1.0.1 + viem@2.38.6, same as the skill
 ```
 
 ## Developing
@@ -64,8 +64,10 @@ Verified locally against Arbitrum One mainnet:
 - The deployed selectors match the ABI the helper encodes:
   `shield(address,uint256)`, `confidentialTransfer(address,bytes32,bytes)`,
   `unshield(address,address,uint64)`, `claimUnshieldedBatch`, `getUserClaims`.
-- Encryption with `@cofhe/sdk@0.8.0` under **bun** against the mainnet
-  verifier (~9 s).
+- Encryption with `@cofhe/sdk@1.0.1` under **bun** against the mainnet
+  verifier (~9 s). The verifier rejects proofs from SDK 0.x
+  (`ZK_VERIFY_FAILED`: proof metadata must end with the contract address), so
+  don't pin below 1.0.
 - A helper-built `confidentialTransfer` (both `send` and `send-blob`)
   succeeds in `eth_call` from a real fUSDC holder, and reverts `InvalidSigner`
   from any other sender, so a copied fhe: code is useless.

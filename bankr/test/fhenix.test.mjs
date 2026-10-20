@@ -41,8 +41,8 @@ describe('fhe: codes', () => {
     expect(() => decodeBlob(blob, ARB, TOKENS[ARB].fUSDT.address)).toThrow(/different token/);
   });
   test('refuses another chain, even when the address is the same', () => {
-    // 0x57192b… is fLINK on Arbitrum and fUSDC on Ethereum.
-    const shared = TOKENS[ARB].fLINK.address;
+    // Every wrapper has the same address on Arbitrum and Ethereum.
+    const shared = TOKENS[ARB].fUSDC.address;
     expect(getAddress(TOKENS[1].fUSDC.address)).toBe(getAddress(shared));
     const blob = encodeBlob(ARB, shared, HANDLE, PROOF);
     expect(() => decodeBlob(blob, 1, shared)).toThrow(/chain 42161/);

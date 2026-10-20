@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **`bankr/fhenix-private`**: a skill for the Bankr agent (not Claude Code) for private balances and transfers with Fhenix confidential tokens on Arbitrum One and Ethereum mainnet. It covers shield, private send, `fhe:` codes for X posts, unshield + claim, and private balance via a self ACP signed through Bankr's Wallet API. A pinned bun helper (`@cofhe/sdk@0.8.0`, `viem@2.38.6`) builds every transaction, and the skill enforces privacy rules for public posts.
+- **`bankr/fhenix-private`**: a skill for the Bankr agent (not Claude Code) for private balances and transfers with Fhenix confidential tokens on Arbitrum One and Ethereum mainnet. It covers shield, private send, `fhe:` codes for X posts, unshield + claim, and private balance via a self ACP signed through Bankr's Wallet API. A pinned bun helper (`@cofhe/sdk@1.0.1`, `viem@2.38.6`) builds every transaction, and the skill enforces privacy rules for public posts.
 - `bankr-skills` CI workflow: unit tests plus a daily on-chain re-check of every pinned wrapper address.
 
 ## [0.2.0] — 2026-05-31
