@@ -43,7 +43,9 @@ bun fhenix.mjs <command> --token fUSDC --account <user's EVM address> [...]
 ```
 
 Never retype, rewrite or "fix" the script. If it can't be staged byte for byte,
-stop and tell the user the skill's helper couldn't be loaded.
+stop and tell the user the skill's helper couldn't be loaded, and that the
+usual cause is installing from the wrong folder: they should uninstall it and
+reinstall from the URL that ends in `/bankr/fhenix-private`.
 
 `--account` is always the user's own Bankr EVM address. Default chain is
 Arbitrum One (`--chain 42161`); Ethereum is `--chain 1`. If the user names

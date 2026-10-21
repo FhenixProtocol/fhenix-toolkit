@@ -13,6 +13,9 @@ them, and Bankr installs them straight from this public repo.
 install the skill at https://github.com/FhenixProtocol/fhenix-toolkit/tree/main/bankr/fhenix-private
 ```
 
+Always install from the skill's own folder, never from `bankr/`: Bankr only
+mirrors `scripts/` when the URL points at the folder holding `SKILL.md`.
+
 Unlike the Claude Code skills, a Bankr skill is a runtime artifact: the agent
 executes `scripts/fhenix.mjs` and submits what it returns. So the token
 addresses and the contract ABI are **pinned** in the script on purpose. It is
@@ -88,15 +91,21 @@ Bankr only submits to mainnets, so the first end-to-end test is on Arbitrum
 One with small amounts. Use a fresh Bankr wallet holding about **5 USDC + 0.001
 ETH on Arbitrum**.
 
-**0. Install.** In the Bankr terminal (bankr.bot/terminal):
+**0. Install.** In the Bankr terminal (bankr.bot/terminal), until this is
+merged to `main`:
 
 ```
-install the skill at https://github.com/FhenixProtocol/fhenix-toolkit/tree/main/bankr/fhenix-private
+install the skill at https://github.com/FhenixProtocol/fhenix-toolkit/tree/feat/fhenix-bankr/bankr/fhenix-private
 ```
 
-Before merge, point the URL at the branch. If Bankr misreads a branch name
-containing `/`, push the commit to a slash-free branch and use that. Then
-check Security → *Enable arbitrary contract calls* is on.
+The URL must end at the skill folder (`…/bankr/fhenix-private`), the one that
+holds `SKILL.md`. Installing from the parent `…/bankr` copies the markdown but
+not `scripts/`, so every command fails with "the skill's helper couldn't be
+loaded". To check, ask Bankr "list the files in /skills/fhenix-private/scripts";
+it should show `fhenix.mjs`. If it doesn't, uninstall and reinstall from the
+URL above. If Bankr misreads the `/` in the branch name, push the commit to a
+slash-free branch and use that. Then check Security → *Enable arbitrary
+contract calls* is on.
 
 **1. Shield.** "shield 2 USDC into private fUSDC". Expect an approve and a
 shield tx on Arbiscan; the agent's reply shouldn't need an amount. Proves
