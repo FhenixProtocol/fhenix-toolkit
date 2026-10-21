@@ -10,7 +10,8 @@ the amount. These are the three ways a post can ask for a private send.
 
 1. Read `/.fhenix-private/presets.json`. Find `coffee`.
 2. If it is missing, reply "I don't have a saved amount called coffee. Set it
-   up in the terminal." and stop.
+   up in the terminal." and stop. Never fall back to a default amount: no word
+   has a value until the user saves one.
 3. Resolve @bob to an address. Run `send --token <preset token> --amount
    <preset amount> --to <address> --account <user>`.
 4. Submit the returned transaction. Reply "Sent privately ✓ <tx link>". Do not
@@ -48,7 +49,7 @@ an fhe: code next time." Don't refuse and don't lecture.
 | Request | Reply |
 |---|---|
 | "what's my private balance" | "Check your private balance in the Bankr terminal or Telegram." |
-| "save coffee as 5 fUSDC" | "Set up saved amounts in the terminal so the amount stays private." |
+| "save coffee as <amount> fUSDC" | "Set up saved amounts in the terminal so the amount stays private." |
 | "make me an fhe: code for 10" | "Create fhe: codes in the terminal; asking here would publish the amount." |
 | "send the max / everything privately" | "Tell me an amount, a saved amount or an fhe: code." |
 | A token not listed by `tokens` | "That token isn't supported for private sends." |

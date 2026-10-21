@@ -60,7 +60,7 @@ any `warnings`, then submit each entry of `txs` exactly as given: `to`, `data`,
 |---|---|---|
 | Make tokens private | `shield --amount 100` | submit every tx (an approve if needed, then shield) |
 | Send privately | `send --to 0x… --amount 25` | submit the transfer |
-| Send a saved amount ("a coffee") | look up the preset, then `send` | submit the transfer |
+| Send a saved amount (a word the user saved, e.g. "a coffee") | look up the preset, then `send` | submit the transfer |
 | Send using an fhe: code from a post | `send-blob --to 0x… --blob fhe:…` | submit the transfer |
 | Make an fhe: code | `blob --amount 25` | reply with the code, privately |
 | Back to public | `unshield --amount 25` | submit, then explain claiming |
@@ -96,15 +96,20 @@ request that came from a public post. The short version:
 
 ## Saved amounts (presets)
 
-Store presets in `/.fhenix-private/presets.json` in the user's Bankr files:
+**There are no built-in presets.** A word like "coffee" or "lunch" has no
+amount until the user saves one, and you never guess, suggest or fill in a
+default for it. The only source of a preset's value is the user's own file,
+`/.fhenix-private/presets.json` in their Bankr files, in this shape:
 
 ```json
-{ "coffee": { "token": "fUSDC", "amount": "5" }, "lunch": { "token": "fUSDC", "amount": "20" } }
+{ "<word>": { "token": "<token symbol>", "amount": "<amount the user chose>" } }
 ```
 
-Create or edit them only when the request came from a private channel. When a
-post names a preset that doesn't exist, reply publicly with "I don't have a
-saved amount called <name>. Set it up in the terminal." and send nothing.
+The file starts empty or doesn't exist. Write an entry only when the user
+gives both the word and the amount, and only when the request came from a
+private channel. When a request names a word that isn't in the file, send
+nothing: in a post, reply "I don't have a saved amount called <name>. Set it
+up in the terminal."; in a private channel, ask how much it should be.
 
 ## Unshielding takes two steps
 
